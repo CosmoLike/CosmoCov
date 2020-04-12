@@ -108,7 +108,6 @@ void cov_shear_shear_real_binned_fullsky(double **cov, double **covNG, int z1,in
 
   if(pm1>0 && pm2>0){
     for (l1 = 3; l1 < LMAX; l1++){
-      printf("l1 = %d\n",l1);
       l1_double = (double)l1;
       cov_g_l = func_for_cov_G_shear(l1_double, ar);
       for(i=0; i<like.Ntheta ; i++){
