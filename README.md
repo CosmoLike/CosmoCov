@@ -127,9 +127,9 @@ research:
     for Photometric Galaxy Surveys*;
     arXiv:1601.05779](https://ui.adsabs.harvard.edu/abs/2017MNRAS.470.2100K/exportcitation)
 
-2.  X. Fang, T. Eifler, E. Krause; *2D-FFTLog: Efficient computation of
+2.  [X. Fang, T. Eifler, E. Krause; *2D-FFTLog: Efficient computation of
     real space covariance matrices for galaxy clustering and weak
-    lensing*;
+    lensing*; arXiv:2004.04833](https://arxiv.org/abs/2004.04833)
 
 In addition, <span class="underline">if you use the the non-Limber
 galaxy clustering power spectra in the Gaussian covariance</span>
