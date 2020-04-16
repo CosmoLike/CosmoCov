@@ -24,18 +24,15 @@ void cov_shear_shear_real_binned_fullsky(double **cov, double **covNG, int z1,in
     double *xmin, *xmax, *Pmin, *Pmax, *dPmin, *dPmax;
     xmin= create_double_vector(0, like.Ntheta-1);
     xmax= create_double_vector(0, like.Ntheta-1);
-    double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
-    // printf("like.vtmax,like.vtmin,like.Ntheta,%lg,%lg,%lg\n",like.vtmax,like.vtmin,like.Ntheta);
     for(i=0; i<like.Ntheta ; i++){
-      xmin[i]=cos(exp(log(like.vtmin)+(i+0.0)*logdt));
-      xmax[i]=cos(exp(log(like.vtmin)+(i+1.0)*logdt));
+      xmin[i]=cos(theta[i]);
+      xmax[i]=cos(theta[i+1]);
     }
     Pmin= create_double_vector(0, LMAX+1);
     Pmax= create_double_vector(0, LMAX+1);
     dPmin= create_double_vector(0, LMAX+1);
     dPmax= create_double_vector(0, LMAX+1);
     for (i = 0; i<like.Ntheta; i ++){
-      double x = cos(like.theta[i]);
       gsl_sf_legendre_Pl_deriv_array(LMAX, xmin[i],Pmin,dPmin);
       gsl_sf_legendre_Pl_deriv_array(LMAX, xmax[i],Pmax,dPmax);
       for (int l = 3; l < LMAX; l ++){
@@ -233,7 +230,7 @@ void print_citations(FILE *F1){
   fprintf(F1, "# arXiv: 1705.01092, https://arxiv.org/abs/1705.01092\n");
   fprintf(F1, "# arXiv: 1711.07467, https://arxiv.org/abs/1711.07467\n");
   fprintf(F1, "# arXiv: 1803.03274, https://arxiv.org/abs/1803.03274\n");
-  fprintf(F1, "# arXiv: 2004.xxxxx, https://arxiv.org/abs/2004.xxxxx\n");
+  fprintf(F1, "# arXiv: 2004.04833, https://arxiv.org/abs/2004.04833\n");
   if (w_mask(like.vtmin) < 1.0){
     fprintf(F1, "# arXiv: 1804.10663, https://arxiv.org/abs/1804.10663\n");
   }

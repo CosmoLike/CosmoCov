@@ -19,10 +19,10 @@ void run_cov_clustering_shear_real_bin(char *OUTFILE, char *PATH, double *theta,
 void run_cov_clustering_ggl_real_bin(char *OUTFILE, char *PATH, double *theta, double *dtheta, int Ntheta, int n1, int n2, int start);
 
 void print_citations(FILE *F1){
-  fprintf(F1, "# Please cite the following papers in your research:\n");
+  fprintf(F1, "# Please cite the following papers in research using this covariance:\n");
   fprintf(F1, "# arXiv: 1601.05779, https://arxiv.org/abs/1601.05779\n");
   fprintf(F1, "# arXiv: 1911.11947, https://arxiv.org/abs/1911.11947\n");
-  fprintf(F1, "# arXiv: 2004.xxxxx, https://arxiv.org/abs/2004.xxxxx\n");
+  fprintf(F1, "# arXiv: 2004.04833, https://arxiv.org/abs/2004.04833\n");
   if (w_mask(like.vtmin) < 1.0){
     fprintf(F1, "# arXiv: 1804.10663, https://arxiv.org/abs/1804.10663\n");
   }
@@ -48,8 +48,6 @@ void run_cov_clustering_real_bin(char *OUTFILE, char *PATH, double *theta, doubl
   printf("N_cl_1 = %d, N_cl_2 = %d\n", n1,n2);
 
   double **cov_fullsky_G = 0, **cov_fullsky_NG = 0;
-  like.vtmin = theta[0];
-  like.vtmax = theta[Ntheta];
   cov_fullsky_G = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_fullsky_NG = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_cl_cl_real_binned_fullsky(cov_fullsky_G,cov_fullsky_NG,z1,z2,z3,z4, covparams.ng, theta, dtheta);
@@ -102,8 +100,6 @@ void run_cov_ggl_real_bin(char *OUTFILE, char *PATH, double *theta, double *dthe
   printf("N_tomo_2 = %d (%d, %d)\n", n2,zl2,zs2);
 
   double **cov_fullsky_G = 0, **cov_fullsky_NG = 0;
-  like.vtmin = theta[0];
-  like.vtmax = theta[Ntheta];
   cov_fullsky_G = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_fullsky_NG = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_gl_gl_real_binned_fullsky(cov_fullsky_G,cov_fullsky_NG,zl1,zs1,zl2,zs2, covparams.ng, theta, dtheta);
@@ -156,8 +152,6 @@ void run_cov_shear_shear_real_bin(char *OUTFILE, char *PATH,double *theta, doubl
 
 
   double **cov_fullsky_G = 0, **cov_fullsky_NG = 0;
-  like.vtmin = theta[0];
-  like.vtmax = theta[Ntheta];
   cov_fullsky_G = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_fullsky_NG = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_shear_shear_real_binned_fullsky(cov_fullsky_G,cov_fullsky_NG,z1,z2,z3,z4,pm1,pm2, covparams.ng, theta, dtheta);
@@ -217,8 +211,6 @@ void run_cov_ggl_shear_real_bin(char *OUTFILE, char *PATH, double *theta, double
   printf("N_shear = %d (%d, %d)\n", n2,z3,z4);
 
   double **cov_fullsky_G = 0, **cov_fullsky_NG = 0;
-  like.vtmin = theta[0];
-  like.vtmax = theta[Ntheta];
   cov_fullsky_G = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_fullsky_NG = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_gl_shear_real_binned_fullsky(cov_fullsky_G,cov_fullsky_NG,zl,zs,z3,z4,pm, covparams.ng, theta, dtheta);
@@ -271,8 +263,6 @@ void run_cov_clustering_shear_real_bin(char *OUTFILE, char *PATH, double *theta,
   printf("N_shear = %d (%d, %d)\n", n2,z3,z4);
 
   double **cov_fullsky_G = 0, **cov_fullsky_NG = 0;
-  like.vtmin = theta[0];
-  like.vtmax = theta[Ntheta];
   cov_fullsky_G = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_fullsky_NG = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_cl_shear_real_binned_fullsky(cov_fullsky_G,cov_fullsky_NG,z1,z2,z3,z4,pm, covparams.ng, theta, dtheta);
@@ -326,8 +316,6 @@ void run_cov_clustering_ggl_real_bin(char *OUTFILE, char *PATH, double *theta, d
   printf("N_tomo_2 = %d (%d, %d)\n", n2,zl,zs);
 
   double **cov_fullsky_G = 0, **cov_fullsky_NG = 0;
-  like.vtmin = theta[0];
-  like.vtmax = theta[Ntheta];
   cov_fullsky_G = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_fullsky_NG = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
   cov_cl_gl_real_binned_fullsky(cov_fullsky_G,cov_fullsky_NG,z1,z2,zl,zs, covparams.ng, theta, dtheta);

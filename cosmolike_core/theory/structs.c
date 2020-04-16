@@ -13,7 +13,7 @@ typedef struct {
   double lmax;
   double vtmax;
   double vtmin;
-  double *theta;
+  double *theta_min;
   double cosmax;
   double Rmin_bias;
   double Rmin_shear;
@@ -25,10 +25,10 @@ typedef struct {
   int clphotoz;
   int shearcalib;
   char DATA_FILE[500];
-  char INV_FILE[500]; 
+  char INV_FILE[500];
   char COV_FILE[500];
-  char BARY_FILE[500]; 
-  char MASK_FILE[500]; 
+  char BARY_FILE[500];
+  char MASK_FILE[500];
   int shear_shear;
   int shear_pos;
   int pos_pos;
@@ -36,7 +36,7 @@ typedef struct {
   char ext_data[500];
   int theta_s;
 }likepara;
-likepara like ={.baryons = 0, .IA = 0., .bias = 0, .wlphotoz = 0, .clphotoz = 0, .shearcalib = 0,.theta_s =0};
+likepara like ={.theta_min = 0, .baryons = 0, .IA = 0., .bias = 0, .wlphotoz = 0, .clphotoz = 0, .shearcalib = 0,.theta_s =0};
 
 typedef struct {
      double Omega_m;  /* matter density parameter                       */
@@ -53,7 +53,7 @@ typedef struct {
      double Omega_nu; //density parameter of massive neutrinos; Omega_m = Omega_cdm+ Omega_nu + omb
      double coverH0; //units for comoving distances - speeds up code
      double rho_crit;      /* = 3 H_0^2/(8 pi G), critical comoving density */
-     double f_NL; 
+     double f_NL;
      double MGSigma;
      double MGmu;
      double theta_s;
@@ -68,7 +68,7 @@ typedef struct {
   double n_source[10];
   int clustering_Nbin; // number of tomography bins
   int clustering_Npowerspectra;// number of tomography power spectra+2+3+...+Nbin
-  double clustering_zmax[10]; 
+  double clustering_zmax[10];
   double clustering_zmin[10];
   double n_lens[10];
   int ggl_Npowerspectra;// number of ggl tomography combinations
@@ -82,7 +82,7 @@ typedef struct {
   double shear_zdistrpar_zmax;
   int shear_histogram_zbins;
   char shear_REDSHIFT_FILE[200];
-   
+
   int clustering_photoz;
   double clustering_zdistrpar_zmin;
   double clustering_zdistrpar_zmax;
@@ -99,7 +99,7 @@ typedef struct {
      double n_gal_conversion_factor; /*factor from n_gal/arcmin^2 to n_gal/radian^2: 1.0/constants.arcmin/constants.arcmin */
      double n_lens;/* lens galaxy density per arcmin^2 */
      double m_lim;
-     char name[500];        
+     char name[500];
      int surveystage;
      char sourcephotoz[256];
      char lensphotoz[256];
@@ -157,7 +157,8 @@ nuisancepara nuisance ={.c1rhocrit_ia = 0.01389,
 typedef struct {
     double tmin; /* Theta min (arcmin) */
     double tmax; /* Theta max (arcmin) */
-    int ntheta;/* number of theta bins */
+    int ntheta;  /* number of theta bins */
+    int lin_bins;/* switch between log-binning (lin_bins = 0, default) and linear binning (lin_bins =1)*/
     double lmin; /* ell min  */
     double lmax; /* ell max  */
     int ncl;/* number of ell bins */
@@ -170,4 +171,4 @@ typedef struct {
     char ls[8]; /* Calculate shear-position components */
     char ll[8]; /* Calculate position-position components */
 } covpar;
-covpar covparams;
+covpar covparams = {.lin_bins = 0};

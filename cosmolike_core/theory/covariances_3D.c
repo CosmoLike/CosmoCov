@@ -24,7 +24,7 @@ double tri_multih_cov(double k1, double k2, double a); //4h+3h+2h terms in covar
 /***** routines for survey variance ********/
 double survey_variance (double a, double fsky);
 double delP_SSC(double k, double a);
-double w_mask(double theta);
+double w_mask(double theta_min);
 
 /* mode coupling functions */
 
@@ -455,8 +455,8 @@ double w_mask(double theta_min){
   static int NTHETA = 0;
   static double *w_vec =0;
   int i,l;
-  if (like.theta ==NULL || like.Ntheta < 1){
-    printf("covariances_real_binned.c:w_mask: like.theta or like.Ntheta not initialized\nEXIT\n");
+  if (like.theta_min == 0 || like.Ntheta < 1){
+    printf("covariances_real_binned.c:w_mask: like.theta_min or like.Ntheta not initialized\nEXIT\n");
     exit(1);
   }
   if (w_vec ==0){
@@ -492,12 +492,11 @@ double w_mask(double theta_min){
         Pl =create_double_matrix(0, like.Ntheta-1, 0, lbins);
         xmin= create_double_vector(0, like.Ntheta-1);
         xmax= create_double_vector(0, like.Ntheta-1);
-        double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
         Pmin= create_double_vector(0, lbins);
         Pmax= create_double_vector(0, lbins);
         for(i=0; i<like.Ntheta ; i++){
-          xmin[i]=cos(exp(log(like.vtmin)+(i+0.0)*logdt));
-          xmax[i]=cos(exp(log(like.vtmin)+(i+1.0)*logdt));
+          xmin[i]=cos(like.theta_min[i]);
+          xmax[i]=cos(like.theta_min[i+1]);
         }
         for (i = 0; i < like.Ntheta; i++){
           gsl_sf_legendre_Pl_array(lbins, xmin[i],Pmin);
@@ -530,7 +529,7 @@ double w_mask(double theta_min){
     }
   }
   i = 0;
-  while(like.theta[i]< theta_min){
+  while(like.theta_min[i]< theta_min){
     i ++;
   }
   return w_vec[i];

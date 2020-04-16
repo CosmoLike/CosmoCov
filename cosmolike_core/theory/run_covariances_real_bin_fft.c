@@ -14,9 +14,9 @@ void run_cov_clustering_shear_real_binned(char *OUTFILE, char *PATH, double *t, 
 void run_cov_clustering_ggl_real_binned(char *OUTFILE, char *PATH, double *t, double *theta, double *dtheta,int Ntheta, int n1, int n2, int start);
 
 void print_citations(FILE *F1){
-  fprintf(F1, "# Please cite the following papers in your research:\n");
+  fprintf(F1, "# Please cite the following papers in research using this covariance:\n");
   fprintf(F1, "# arXiv: 1601.05779, https://arxiv.org/abs/1601.05779\n");
-  fprintf(F1, "# arXiv: 2004.xxxxx, https://arxiv.org/abs/2004.xxxxx\n");
+  fprintf(F1, "# arXiv: 2004.04833, https://arxiv.org/abs/2004.04833\n");
   if (w_mask(like.vtmin) < 1.0){
     fprintf(F1, "# arXiv: 1804.10663, https://arxiv.org/abs/1804.10663\n");
   }

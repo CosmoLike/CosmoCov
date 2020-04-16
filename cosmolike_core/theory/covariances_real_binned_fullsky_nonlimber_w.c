@@ -8,6 +8,10 @@ by CosmoLike developers
 // Note the look-up tables for power spectrum covariances are recomputed if one the redshift bins changes
 //      Loop over theta1, theta2 first, before computing the next combination of redshift bins
 /*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+// The vector called "theta" contains theta_min, the lower bin boundaries
+// This is used in the bin-average and shot/shape noise computation
+/*!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 double cov_G_shear_binned(double theta1_min, double theta1_max,double theta2_min, double theta2_max, int z1,int z2,int z3,int z4,int pm1,int pm2); //Version of Gaussian cov calculation for wide bins
 double cov_NG_shear_binned(double theta1_min, double theta1_max,double theta2_min, double theta2_max, int z1,int z2,int z3,int z4,int pm1,int pm2);
 
@@ -36,7 +40,7 @@ double func_for_cov_G_gl_shear(double l, int *ar);
 /////// full sky covs
 
 void cov_shear_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,int z3,int z4,int pm1,int pm2, int FLAG_NG, double *theta, double *dtheta){
-  
+
   int i,j;
   static int LMAX = 50000;
   static double **Glplus =0;
@@ -47,18 +51,15 @@ void cov_shear_shear_real_binned_fullsky(double **cov, double **covNG, int z1,in
     double *xmin, *xmax, *Pmin, *Pmax, *dPmin, *dPmax;
     xmin= create_double_vector(0, like.Ntheta-1);
     xmax= create_double_vector(0, like.Ntheta-1);
-    double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
-    // printf("like.vtmax,like.vtmin,like.Ntheta,%lg,%lg,%lg\n",like.vtmax,like.vtmin,like.Ntheta);
     for(i=0; i<like.Ntheta ; i++){
-      xmin[i]=cos(exp(log(like.vtmin)+(i+0.0)*logdt));
-      xmax[i]=cos(exp(log(like.vtmin)+(i+1.0)*logdt));
+      xmin[i]=cos(theta[i]);
+      xmax[i]=cos(theta[i+1]);
     }
     Pmin= create_double_vector(0, LMAX+1);
     Pmax= create_double_vector(0, LMAX+1);
     dPmin= create_double_vector(0, LMAX+1);
     dPmax= create_double_vector(0, LMAX+1);
     for (i = 0; i<like.Ntheta; i ++){
-      double x = cos(like.theta[i]);
       gsl_sf_legendre_Pl_deriv_array(LMAX, xmin[i],Pmin,dPmin);
       gsl_sf_legendre_Pl_deriv_array(LMAX, xmax[i],Pmax,dPmax);
       // printf("xmax[%d]:%lg\n", i,xmax[i]);
@@ -86,7 +87,7 @@ void cov_shear_shear_real_binned_fullsky(double **cov, double **covNG, int z1,in
         +2*(l-1) * (xmin[i]*dPmin[l]   - xmax[i]*dPmax[l]   - Pmin[l] + Pmax[l])
         -2*(l+2) * (dPmin[l-1]-dPmax[l-1])
 
-        )/(xmin[i]-xmax[i]);           
+        )/(xmin[i]-xmax[i]);
 
         Glminus[i][l] =(2.*l+1)/(2.*M_PI*l*l*(l+1)*(l+1))*(
 
@@ -101,7 +102,7 @@ void cov_shear_shear_real_binned_fullsky(double **cov, double **covNG, int z1,in
         +2*(l+2) * (dPmin[l-1]-dPmax[l-1])
 
         )/(xmin[i]-xmax[i]);
-        
+
         // printf("Pmin[%d], Pmax[%d]:%lg, %lg\n", l,l, Pmin[l], Pmax[l]);
         // printf("Glplus[%d][%d],%lg\n", i,l, Glplus[i][l]);
       }
@@ -245,7 +246,7 @@ void cov_shear_shear_real_binned_fullsky(double **cov, double **covNG, int z1,in
 }
 
 void cov_gl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,int z3,int z4,int pm, int FLAG_NG, double *theta, double *dtheta){
-  
+
   int i,j;
   static int LMAX = 50000;
   static double **Glplus =0;
@@ -259,18 +260,15 @@ void cov_gl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z
     double *xmin, *xmax, *Pmin, *Pmax, *dPmin, *dPmax;
     xmin= create_double_vector(0, like.Ntheta-1);
     xmax= create_double_vector(0, like.Ntheta-1);
-    double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
-    // printf("like.vtmax,like.vtmin,like.Ntheta,%lg,%lg,%lg\n",like.vtmax,like.vtmin,like.Ntheta);
     for(i=0; i<like.Ntheta ; i++){
-      xmin[i]=cos(exp(log(like.vtmin)+(i+0.0)*logdt));
-      xmax[i]=cos(exp(log(like.vtmin)+(i+1.0)*logdt));
+      xmin[i]=cos(theta[i]);
+      xmax[i]=cos(theta[i+1]);
     }
     Pmin= create_double_vector(0, LMAX+1);
     Pmax= create_double_vector(0, LMAX+1);
     dPmin= create_double_vector(0, LMAX+1);
     dPmax= create_double_vector(0, LMAX+1);
     for (i = 0; i<like.Ntheta; i ++){
-      double x = cos(like.theta[i]);
       gsl_sf_legendre_Pl_deriv_array(LMAX, xmin[i],Pmin,dPmin);
       gsl_sf_legendre_Pl_deriv_array(LMAX, xmax[i],Pmax,dPmax);
       // printf("xmax[%d]:%lg\n", i,xmax[i]);
@@ -298,7 +296,7 @@ void cov_gl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z
         +2*(l-1) * (xmin[i]*dPmin[l]   - xmax[i]*dPmax[l]   - Pmin[l] + Pmax[l])
         -2*(l+2) * (dPmin[l-1]-dPmax[l-1])
 
-        )/(xmin[i]-xmax[i]);           
+        )/(xmin[i]-xmax[i]);
 
         Glminus[i][l] =(2.*l+1)/(2.*M_PI*l*l*(l+1)*(l+1))*(
 
@@ -313,7 +311,7 @@ void cov_gl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z
         +2*(l+2) * (dPmin[l-1]-dPmax[l-1])
 
         )/(xmin[i]-xmax[i]);
-        
+
         // printf("Pmin[%d], Pmax[%d]:%lg, %lg\n", l,l, Pmin[l], Pmax[l]);
         // printf("Glplus[%d][%d],%lg\n", i,l, Glplus[i][l]);
         Pl[i][l] = (2.*l+1)/(4.*M_PI*l*(l+1)*(xmin[i]-xmax[i]))
@@ -401,7 +399,7 @@ void cov_gl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z
 }
 
 void cov_cl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,int z3,int z4,int pm, int FLAG_NG, double *theta, double *dtheta){
-  
+
   int i,j;
   static int LMAX = 10000;
   static double **Glplus =0;
@@ -415,18 +413,15 @@ void cov_cl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z
     double *xmin, *xmax, *Pmin, *Pmax, *dPmin, *dPmax;
     xmin= create_double_vector(0, like.Ntheta-1);
     xmax= create_double_vector(0, like.Ntheta-1);
-    double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
-    // printf("like.vtmax,like.vtmin,like.Ntheta,%lg,%lg,%lg\n",like.vtmax,like.vtmin,like.Ntheta);
     for(i=0; i<like.Ntheta ; i++){
-      xmin[i]=cos(exp(log(like.vtmin)+(i+0.0)*logdt));
-      xmax[i]=cos(exp(log(like.vtmin)+(i+1.0)*logdt));
+      xmin[i]=cos(theta[i]);
+      xmax[i]=cos(theta[i+1]);
     }
     Pmin= create_double_vector(0, LMAX+1);
     Pmax= create_double_vector(0, LMAX+1);
     dPmin= create_double_vector(0, LMAX+1);
     dPmax= create_double_vector(0, LMAX+1);
     for (i = 0; i<like.Ntheta; i ++){
-      double x = cos(like.theta[i]);
       gsl_sf_legendre_Pl_deriv_array(LMAX, xmin[i],Pmin,dPmin);
       gsl_sf_legendre_Pl_deriv_array(LMAX, xmax[i],Pmax,dPmax);
       // printf("xmax[%d]:%lg\n", i,xmax[i]);
@@ -454,7 +449,7 @@ void cov_cl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z
         +2*(l-1) * (xmin[i]*dPmin[l]   - xmax[i]*dPmax[l]   - Pmin[l] + Pmax[l])
         -2*(l+2) * (dPmin[l-1]-dPmax[l-1])
 
-        )/(xmin[i]-xmax[i]);           
+        )/(xmin[i]-xmax[i]);
 
         Glminus[i][l] =(2.*l+1)/(2.*M_PI*l*l*(l+1)*(l+1))*(
 
@@ -469,7 +464,7 @@ void cov_cl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z
         +2*(l+2) * (dPmin[l-1]-dPmax[l-1])
 
         )/(xmin[i]-xmax[i]);
-        
+
         Pl[i][l] = 1./(4.*M_PI)*(Pmin[l+1]-Pmax[l+1]-Pmin[l-1]+Pmax[l-1])/(xmin[i]-xmax[i]);
         // printf("Pmin[%d], Pmax[%d]:%lg, %lg\n", l,l, Pmin[l], Pmax[l]);
         // printf("Glplus[%d][%d],%lg\n", i,l, Glplus[i][l]);
@@ -558,7 +553,7 @@ void cov_cl_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z
 }
 
 void cov_cl_gl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,int z3,int z4, int FLAG_NG, double *theta, double *dtheta){
-  
+
   int i,j;
   static int LMAX = 50000;
   static double **Pl =0;
@@ -570,18 +565,15 @@ void cov_cl_gl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,i
     double *xmin, *xmax, *Pmin, *Pmax, *dPmin, *dPmax;
     xmin= create_double_vector(0, like.Ntheta-1);
     xmax= create_double_vector(0, like.Ntheta-1);
-    double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
-    // printf("like.vtmax,like.vtmin,like.Ntheta,%lg,%lg,%lg\n",like.vtmax,like.vtmin,like.Ntheta);
     for(i=0; i<like.Ntheta ; i++){
-      xmin[i]=cos(exp(log(like.vtmin)+(i+0.0)*logdt));
-      xmax[i]=cos(exp(log(like.vtmin)+(i+1.0)*logdt));
+      xmin[i]=cos(theta[i]);
+      xmax[i]=cos(theta[i+1]);
     }
     Pmin= create_double_vector(0, LMAX+1);
     Pmax= create_double_vector(0, LMAX+1);
     dPmin= create_double_vector(0, LMAX+1);
     dPmax= create_double_vector(0, LMAX+1);
     for (i = 0; i<like.Ntheta; i ++){
-      double x = cos(like.theta[i]);
       gsl_sf_legendre_Pl_array(LMAX, xmin[i],Pmin);
       gsl_sf_legendre_Pl_array(LMAX, xmax[i],Pmax);
       Pl[i][1] = 1./(4.*M_PI)*(Pmin[2]-Pmax[2]-Pmin[0]+Pmax[0])/(xmin[i]-xmax[i]);
@@ -642,7 +634,7 @@ void cov_cl_gl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,i
 }
 
 void cov_gl_gl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,int z3,int z4, int FLAG_NG, double *theta, double *dtheta){
-  
+
   int i,j;
   static int LMAX = 50000;
   static double **Pl =0;
@@ -652,18 +644,15 @@ void cov_gl_gl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,i
     double *xmin, *xmax, *Pmin, *Pmax, *dPmin, *dPmax;
     xmin= create_double_vector(0, like.Ntheta-1);
     xmax= create_double_vector(0, like.Ntheta-1);
-    double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
-    // printf("like.vtmax,like.vtmin,like.Ntheta,%lg,%lg,%lg\n",like.vtmax,like.vtmin,like.Ntheta);
     for(i=0; i<like.Ntheta ; i++){
-      xmin[i]=cos(exp(log(like.vtmin)+(i+0.0)*logdt));
-      xmax[i]=cos(exp(log(like.vtmin)+(i+1.0)*logdt));
+      xmin[i]=cos(theta[i]);
+      xmax[i]=cos(theta[i+1]);
     }
     Pmin= create_double_vector(0, LMAX+1);
     Pmax= create_double_vector(0, LMAX+1);
     dPmin= create_double_vector(0, LMAX+1);
     dPmax= create_double_vector(0, LMAX+1);
     for (i = 0; i<like.Ntheta; i ++){
-      double x = cos(like.theta[i]);
       gsl_sf_legendre_Pl_array(LMAX, xmin[i],Pmin);
       gsl_sf_legendre_Pl_array(LMAX, xmax[i],Pmax);
       for (int l = 2; l < LMAX; l ++){
@@ -734,7 +723,7 @@ void cov_gl_gl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,i
 }
 
 void cov_cl_cl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,int z3,int z4, int FLAG_NG, double *theta, double *dtheta){
-  
+
   int i,j;
   static int LMAX = 50000;
   static double **Pl =0;
@@ -744,18 +733,15 @@ void cov_cl_cl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,i
     double *xmin, *xmax, *Pmin, *Pmax, *dPmin, *dPmax;
     xmin= create_double_vector(0, like.Ntheta-1);
     xmax= create_double_vector(0, like.Ntheta-1);
-    double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
-    // printf("like.vtmax,like.vtmin,like.Ntheta,%lg,%lg,%lg\n",like.vtmax,like.vtmin,like.Ntheta);
     for(i=0; i<like.Ntheta ; i++){
-      xmin[i]=cos(exp(log(like.vtmin)+(i+0.0)*logdt));
-      xmax[i]=cos(exp(log(like.vtmin)+(i+1.0)*logdt));
+      xmin[i]=cos(theta[i]);
+      xmax[i]=cos(theta[i+1]);
     }
     Pmin= create_double_vector(0, LMAX+1);
     Pmax= create_double_vector(0, LMAX+1);
     dPmin= create_double_vector(0, LMAX+1);
     dPmax= create_double_vector(0, LMAX+1);
     for (i = 0; i<like.Ntheta; i ++){
-      double x = cos(like.theta[i]);
       gsl_sf_legendre_Pl_array(LMAX, xmin[i],Pmin);
       gsl_sf_legendre_Pl_array(LMAX, xmax[i],Pmax);
       for (int l = 1; l < LMAX; l ++){
@@ -791,7 +777,7 @@ void cov_cl_cl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,i
     for(i=0;i<like.Ntheta;i++) {
       N[i] += 1./(M_PI*(2.*theta[i]+dtheta[i])*dtheta[i]*nlens(z1)*nlens(z2)*pow(survey.n_gal_conversion_factor,2.0)*survey.area*survey.area_conversion_factor);
     }
-  } 
+  }
   for(i=0;i<like.Ntheta;i++) {if(N[i]) N[i] /= w_mask(theta[i]);}
 
   double triP;
@@ -837,12 +823,12 @@ double func_for_cov_G_shear(double l, int *ar){
   C24 = C_shear_shear_IA_tab(l,n2,n4);
   C14 = C_shear_shear_IA_tab(l,n1,n4);
   C23 = C_shear_shear_IA_tab(l,n2,n3);
-  
+
   if (n1 == n3){N13= pow(survey.sigma_e,2.0)/(2.*nsource(n1)*survey.n_gal_conversion_factor);}
   if (n1 == n4){N14= pow(survey.sigma_e,2.0)/(2.*nsource(n1)*survey.n_gal_conversion_factor);}
   if (n2 == n3){N23= pow(survey.sigma_e,2.0)/(2.*nsource(n2)*survey.n_gal_conversion_factor);}
   if (n2 == n4){N24= pow(survey.sigma_e,2.0)/(2.*nsource(n2)*survey.n_gal_conversion_factor);}
-  
+
   return (C13*C24+C13*N24+N13*C24 + C14*C23+C14*N23+N14*C23)*4.*M_PI/(survey.area*survey.area_conversion_factor* (2.*l+1.));
 }
 
@@ -855,7 +841,7 @@ double func_for_cov_G_cl(double l, int *ar){
   C24 = C_cl_tomo_nonlimber_interp(l,n2,n4);
   C14 = C_cl_tomo_nonlimber_interp(l,n1,n4);
   C23 = C_cl_tomo_nonlimber_interp(l,n2,n3);
-  
+
   if (n1 == n3){N13= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
   if (n1 == n4){N14= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
   if (n2 == n3){N23= 1./(nlens(n2)*survey.n_gal_conversion_factor);}
@@ -876,7 +862,7 @@ double func_for_cov_G_cl_gl(double l, int *ar){
   C23 = C_cl_tomo_nonlimber_interp(l,n2,n3);
   if (n1 == n3){N13= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
   if (n2 == n3){N23= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
-  
+
   return (C13*C24+C13*N24+C24*N13+C14*C23+C14*N23+C23*N14)*4.*M_PI/(survey.area*survey.area_conversion_factor* (2.*l+1.));
 }
 
@@ -903,10 +889,10 @@ double func_for_cov_G_gl(double l, int *ar){
   C24 = C_shear_shear_IA_tab(l,n2,n4);
   C14 = C_ggl_IA_tab(l,n1,n4);
   C23 = C_ggl_IA_tab(l,n3,n2);
-  
+
   if (n1 == n3){N13= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
   if (n2 == n4){N24= pow(survey.sigma_e,2.0)/(2.0*nsource(n2)*survey.n_gal_conversion_factor);}
-  
+
   return (C13*C24+C13*N24+N13*C24 + C14*C23+C14*N23+N14*C23)*4.*M_PI/(survey.area*survey.area_conversion_factor* (2.*l+1.));
 }
 
@@ -921,6 +907,6 @@ double func_for_cov_G_gl_shear(double l, int *ar){
   C23 = C_shear_shear_IA_tab(l,n2,n3);
   if (n2 == n4){N24= pow(survey.sigma_e,2.0)/(2.0*nsource(n2)*survey.n_gal_conversion_factor);}
   if (n2 == n3){N23= pow(survey.sigma_e,2.0)/(2.0*nsource(n2)*survey.n_gal_conversion_factor);}
- 
+
   return (C13*C24+C13*N24+N13*C24 + C14*C23+C14*N23+N14*C23)*4.*M_PI/(survey.area*survey.area_conversion_factor* (2.*l+1.));
 }

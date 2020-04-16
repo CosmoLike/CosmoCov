@@ -88,24 +88,17 @@ int main(int argc, char** argv)
 
   printf("running multi_covariance_real with NG = %d, cNG = %d\n",NG, cNG);
 
+  like.Ntheta=covparams.ntheta;
   like.vtmin = covparams.tmin;
   like.vtmax = covparams.tmax;
-  like.Ntheta = covparams.ntheta;
-  double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
-  double *theta,*thetamin,*thetamax, *dtheta;
-  theta=create_double_vector(0,like.Ntheta-1);
-  thetamin=create_double_vector(0,like.Ntheta);
-  thetamax=create_double_vector(0,like.Ntheta-1);
-  dtheta=create_double_vector(0,like.Ntheta-1);
-  for(i=0; i<like.Ntheta ; i++){
-    thetamin[i]=exp(log(like.vtmin)+(i+0.0)*logdt);
-    thetamax[i]=exp(log(like.vtmax)+(i+1.0)*logdt);
-    theta[i] = 2./3.*(pow(thetamax[i],3.)-pow(thetamin[i],3.))/(pow(thetamax[i],2.)-pow(thetamin[i],2.));
-    //printf("%d %e %e\n", i, thetamin[i],theta[i]);
-    dtheta[i]=thetamax[i]-thetamin[i];
-  }
-  thetamin[like.Ntheta] = thetamax[like.Ntheta-1];
-  like.theta=theta; // like.theta ponts to memory of theta
+
+  int Ntheta = like.Ntheta;
+  double *thetamin,*dtheta,*theta;
+  thetamin=create_double_vector(0,Ntheta);
+  dtheta=create_double_vector(0,Ntheta-1);
+  theta=create_double_vector(0,Ntheta-1);
+  set_angular_binning(thetamin,dtheta);
+
   printf("numbers of power spectra:shear %d, clustering %d, ggl %d \n",tomo.shear_Npowerspectra, tomo.clustering_Npowerspectra,tomo.ggl_Npowerspectra);
   int k=1;
   if (strcmp(covparams.ss,"true")==0)
