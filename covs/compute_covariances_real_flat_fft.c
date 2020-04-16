@@ -105,7 +105,6 @@ int main(int argc, char** argv)
   set_angular_binning(thetamin,dtheta);
   for (i =0; i< Ntheta; i++){
     theta[i] = 2./3.*(pow(thetamin[i+1],3.)-pow(thetamin[i],3.))/(pow(thetamin[i+1],2.)-pow(thetamin[i],2.));
-    printf("%d %e %e\n",i,thetamin[i],theta[i]);
   }
 
 

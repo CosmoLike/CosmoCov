@@ -26,7 +26,6 @@ void set_angular_binning(double *thetamin, double *dtheta){
       thetamin[i]=like.vtmin+i*dt;
       thetamax[i]=like.vtmin+(i+1.0)*dt;
       dtheta[i]=thetamax[i]-thetamin[i];
-      printf("lin bin %d %e %e\n",i,thetamin[i],thetamax[i]);
     }
   }
   else{  /* logarithmic binning */

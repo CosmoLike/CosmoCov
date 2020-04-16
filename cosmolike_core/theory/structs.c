@@ -171,4 +171,4 @@ typedef struct {
     char ls[8]; /* Calculate shear-position components */
     char ll[8]; /* Calculate position-position components */
 } covpar;
-covpar covparams = {.lin_bins = 0};
+covpar covparams = {.lin_bins = 0, .ss ="false", .ls ="false", .ll ="false"};
