@@ -274,7 +274,7 @@ void set_cosmological_parameters(char *cosmofile, int output)
     iline++;
     if(line[0] == '#') continue;
 
-    sscanf(line, "%64s : %64s", name, val);
+    sscanf(line, "%128s : %128s", name, val);
     if(strcmp(name, "Omega_m")==0)
     {
       sscanf(val, "%lf", &cosmology.Omega_m);
@@ -413,7 +413,7 @@ void set_survey_parameters(char *surveyfile, int output)
 
     if(line[0] == '#') continue;
 
-    sscanf(line, "%64s : %64s", name, val);
+    sscanf(line, "%128s : %128s", name, val);
     if(strcmp(name, "area")==0)
     {
       sscanf(val, "%lf", &survey.area);
