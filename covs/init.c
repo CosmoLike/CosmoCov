@@ -15,8 +15,31 @@ double mask(int READ, int ci);
 void init_source_sample(char *multihisto_file, int Ntomo);
 void init_ggl_tomo();
 void init_lens_sample(char *multihisto_file, int Ntomo);
+void set_angular_binning(double *thetamin, double *dtheta);
 
-
+void set_angular_binning(double *thetamin, double *dtheta){
+  double *thetamax;
+  thetamax=create_double_vector(0,like.Ntheta-1);
+  if(covparams.lin_bins){ /* linear binning */
+    double dt = (like.vtmax-like.vtmin)/like.Ntheta;
+    for(int i=0; i<like.Ntheta; i++){
+      thetamin[i]=like.vtmin+i*dt;
+      thetamax[i]=like.vtmin+(i+1.0)*dt;
+      dtheta[i]=thetamax[i]-thetamin[i];
+    }
+  }
+  else{  /* logarithmic binning */
+    double logdt=(log(like.vtmax)-log(like.vtmin))/like.Ntheta;
+    for(int i=0; i<like.Ntheta; i++){
+      thetamin[i]=exp(log(like.vtmin)+(i+0.0)*logdt);
+      thetamax[i]=exp(log(like.vtmin)+(i+1.0)*logdt);
+      dtheta[i]=thetamax[i]-thetamin[i];
+    }
+  }
+  thetamin[like.Ntheta] = thetamax[like.Ntheta-1];
+  free_double_vector(thetamax,0,like.Ntheta-1);
+  like.theta_min = thetamin;
+}
 
 void init_source_sample(char *multihisto_file, int Ntomo)
 {
@@ -145,6 +168,15 @@ void set_cov_parameters(char *covparamfile, int output)
       if(output==1)
       {
         printf("ntheta %d \n",covparams.ntheta);
+      }
+      continue;
+    }
+    else if(strcmp(name, "linear_binning")==0)
+    {
+      sscanf(val, "%d", &covparams.lin_bins);
+      if(output==1)
+      {
+        printf("linear binning %d \n",covparams.lin_bins);
       }
       continue;
     }
@@ -589,7 +621,7 @@ void set_survey_parameters(char *surveyfile, int output)
       continue;
     }
     else if(strcmp(name, "lens_tomogbias")==0)
-    { 
+    {
       i=0;
       for (char *p = strtok(val,","); p != NULL; p = strtok(NULL, ","))
       {
@@ -604,7 +636,7 @@ void set_survey_parameters(char *surveyfile, int output)
       }
     }
     else if(strcmp(name, "lens_tomo_bmag")==0)
-    { 
+    {
       i=0;
       for (char *p = strtok(val,","); p != NULL; p = strtok(NULL, ","))
       {
@@ -619,7 +651,7 @@ void set_survey_parameters(char *surveyfile, int output)
       }
     }
     else if(strcmp(name, "lens_zphot_sigma")==0)
-    { 
+    {
       i=0;
       for (char *p = strtok(val,","); p != NULL; p = strtok(NULL, ","))
       {
@@ -634,7 +666,7 @@ void set_survey_parameters(char *surveyfile, int output)
       }
     }
     else if(strcmp(name, "source_zphot_sigma")==0)
-    { 
+    {
 
       i=0;
       for (char *p = strtok(val,","); p != NULL; p = strtok(NULL, ","))
@@ -684,4 +716,3 @@ void set_survey_parameters(char *surveyfile, int output)
   survey.area_conversion_factor = 60.0*60.0*constants.arcmin*constants.arcmin;
   survey.n_gal_conversion_factor=1.0/constants.arcmin/constants.arcmin;
 }
-

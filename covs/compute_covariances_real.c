@@ -12,7 +12,7 @@ by CosmoLike developers
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
- 
+
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_sf_erf.h>
 #include <gsl/gsl_integration.h>
@@ -33,8 +33,8 @@ by CosmoLike developers
 #include "../cosmolike_core/cfftlog/cfftlog.h"
 #include "../cosmolike_core/cfftlog/utils.h"
 
-#include "../cosmolike_core/theory/basics.c"
 #include "../cosmolike_core/theory/structs.c"
+#include "../cosmolike_core/theory/basics.c"
 #include "../cosmolike_core/theory/recompute.c"
 #include "../cosmolike_core/theory/cosmo3D.c"
 #include "../cosmolike_core/theory/redshift_spline.c"
@@ -60,11 +60,11 @@ int main(int argc, char** argv)
   int i,l,m,n,o,s,p,output;
   double ktmp;
   char OUTFILE[400],filename[400];
-  
+
   // set this to one to output details about inputs for diagnostics
   output = 0;
   FILE *F;
-  
+
   set_cosmological_parameters(inifile,1);
   set_survey_parameters(inifile,1);
 
@@ -90,28 +90,17 @@ int main(int argc, char** argv)
 
   printf("running multi_covariance_real with NG = %d, cNG = %d\n",NG, cNG);
 
-  double theta_min=covparams.tmin;
-  double theta_max=covparams.tmax;
-  int Ntheta=covparams.ntheta; 
+  like.Ntheta=covparams.ntheta;
   like.vtmin = covparams.tmin;
   like.vtmax = covparams.tmax;
-  like.Ntheta = covparams.ntheta;
-  double logdt=(log(theta_max)-log(theta_min))/Ntheta;
-  double *theta,*thetamin,*thetamax, *dtheta;
-  theta=create_double_vector(0,Ntheta-1);
+
+  int Ntheta = like.Ntheta;
+  double *thetamin,*dtheta,*theta;
   thetamin=create_double_vector(0,Ntheta);
-  thetamax=create_double_vector(0,Ntheta-1);
   dtheta=create_double_vector(0,Ntheta-1);
-  for(i=0; i<Ntheta ; i++){
-    thetamin[i]=exp(log(theta_min)+(i+0.0)*logdt);
-    thetamax[i]=exp(log(theta_min)+(i+1.0)*logdt);
-    theta[i] = 2./3.*(pow(thetamax[i],3.)-pow(thetamin[i],3.))/(pow(thetamax[i],2.)-pow(thetamin[i],2.));
-    //printf("%d %e %e\n", i, thetamin[i],theta[i]);
-    dtheta[i]=thetamax[i]-thetamin[i];
-  }
-  thetamin[Ntheta] = thetamax[Ntheta-1];
-  like.theta=theta; // like.theta ponts to memory of theta
-  like.Ntheta = Ntheta;
+  theta=create_double_vector(0,Ntheta-1);
+  set_angular_binning(thetamin,dtheta);
+
   printf("numbers of powers: %d, %d, %d \n",tomo.shear_Npowerspectra, tomo.clustering_Npowerspectra,tomo.ggl_Npowerspectra);
   int k=1;
   if (strcmp(covparams.ss,"true")==0)
@@ -134,7 +123,7 @@ int main(int argc, char** argv)
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
           run_cov_shear_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,0,0,k);
-        } 
+        }
         k=k+1;
       }
     }
@@ -145,7 +134,7 @@ int main(int argc, char** argv)
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
           run_cov_shear_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,1,0,k);
-        } 
+        }
         k=k+1;
       }
     }
@@ -153,13 +142,13 @@ int main(int argc, char** argv)
   if (strcmp(covparams.ll,"true")==0)
   {
     sprintf(OUTFILE,"%s_llll_cov_Ntheta%d_Ntomo%d",covparams.filename,Ntheta,tomo.shear_Nbin);
-    for (l=0;l<tomo.clustering_Npowerspectra; l++){ 
+    for (l=0;l<tomo.clustering_Npowerspectra; l++){
       for (m=l;m<tomo.clustering_Npowerspectra; m++){
         if(k==hit){
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
           run_cov_clustering_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,k);
-        }        
+        }
         k=k+1;
       }
     }
@@ -173,7 +162,7 @@ int main(int argc, char** argv)
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
           run_cov_ggl_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,k);
-        }        
+        }
         k=k+1;
       }
     }
@@ -186,8 +175,8 @@ int main(int argc, char** argv)
         if(k==hit) {
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
-          run_cov_ggl_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,1,k);  
-        } 
+          run_cov_ggl_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,1,k);
+        }
         k=k+1;
       }
     }
@@ -197,8 +186,8 @@ int main(int argc, char** argv)
         if(k==hit) {
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
-          run_cov_ggl_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,0,k); 
-        } 
+          run_cov_ggl_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,0,k);
+        }
         k=k+1;
       }
     }
@@ -211,8 +200,8 @@ int main(int argc, char** argv)
         if(k==hit) {
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
-          run_cov_clustering_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,1,k);  
-        } 
+          run_cov_clustering_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,1,k);
+        }
         k=k+1;
       }
     }
@@ -222,8 +211,8 @@ int main(int argc, char** argv)
         if(k==hit) {
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
-          run_cov_clustering_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,0,k);  
-        } 
+          run_cov_clustering_shear_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,0,k);
+        }
         k=k+1;
       }
     }
@@ -236,7 +225,7 @@ int main(int argc, char** argv)
         if(k==hit) {
           sprintf(filename,"%s%s_%d",covparams.outdir,OUTFILE,k);
           // if (fopen(filename, "r") != NULL){exit(1);}
-          run_cov_clustering_ggl_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,k);  
+          run_cov_clustering_ggl_real_bin(OUTFILE,covparams.outdir,thetamin,dtheta,Ntheta,l,m,k);
         }
         k=k+1;
       }
@@ -253,14 +242,9 @@ int main(int argc, char** argv)
     fclose(F1);
   }
 
-  printf("number of cov blocks for parallelization: %d\n",k-1); 
+  printf("number of cov blocks for parallelization: %d\n",k-1);
   printf("-----------------\n");
   printf("PROGRAM EXECUTED\n");
   printf("-----------------\n");
-  return 0;   
+  return 0;
 }
-
-
-
-
-

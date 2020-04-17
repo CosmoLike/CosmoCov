@@ -154,7 +154,7 @@ typedef struct {
 
 
 Ntab Ntable = {
-100, //N_a 
+100, //N_a
 500, //N_k_lin
 500, //N_k_nlin
 200, //N_ell
