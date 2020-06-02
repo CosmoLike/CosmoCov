@@ -41,6 +41,8 @@ int ZS(int Nbin);//N_tomo_ggl -> z_s
 int N_shear (int z1, int z2);//(z_1,z_2)-> N_tomo_shear, assuming z1<=z2
 int Z1(int Nbin);//N_tomo_shear -> z1, assuming z1<=z2
 int Z2(int Nbin);//N_tomo_shear -> z2, assuming z1<=z2
+int Zcl1(int Nbin);// find zcl1 of tomography combination (zcl1,zcl2) constituting galaxy clustering tomography bin Nbin
+int Zcl2(int Nbin);// find zcl2 of tomography combination (zcl1,zcl2) constituting galaxy clustering tomography bin Nbin
 
 
 /********** integration boundary routines *************/

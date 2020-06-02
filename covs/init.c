@@ -10,8 +10,6 @@ void set_cov_parameters();
 void set_survey_parameters();
 
 int count_rows(char* filename,const char delimiter);
-double invcov_mask(int READ, int ci, int cj);
-double mask(int READ, int ci);
 void init_source_sample(char *multihisto_file, int Ntomo);
 void init_ggl_tomo();
 void init_lens_sample(char *multihisto_file, int Ntomo);
@@ -85,8 +83,13 @@ void init_lens_sample(char *multihisto_file, int Ntomo)
   sprintf(redshift.clustering_REDSHIFT_FILE,"%s",multihisto_file);
   redshift.clustering_photoz=4;
   tomo.clustering_Nbin = Ntomo;
-  tomo.clustering_Npowerspectra = tomo.clustering_Nbin;
+  if(covparams.full_tomo){
+    tomo.clustering_Npowerspectra = tomo.clustering_Nbin*(tomo.clustering_Nbin+1)/2;
+  } else{
+    tomo.clustering_Npowerspectra = tomo.clustering_Nbin;
+  }
   printf("Lens redshifts: multi-histo file %s, containing %d tomography bins\n",multihisto_file,tomo.clustering_Nbin);
+  printf("%d Clustering Powerspectra\n", tomo.clustering_Npowerspectra);
   pf_photoz(0.1,0);
   // for (int i=0;i<tomo.clustering_Nbin; i++)
   // {
@@ -177,6 +180,15 @@ void set_cov_parameters(char *covparamfile, int output)
       if(output==1)
       {
         printf("linear binning %d \n",covparams.lin_bins);
+      }
+      continue;
+    }
+    else if(strcmp(name, "full_tomo")==0)
+    {
+      sscanf(val, "%d", &covparams.full_tomo);
+      if(output==1)
+      {
+        printf("full tomo %d \n",covparams.full_tomo);
       }
       continue;
     }

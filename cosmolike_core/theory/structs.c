@@ -159,6 +159,7 @@ typedef struct {
     double tmax; /* Theta max (arcmin) */
     int ntheta;  /* number of theta bins */
     int lin_bins;/* switch between log-binning (lin_bins = 0, default) and linear binning (lin_bins =1)*/
+    int full_tomo;/* switch between auto-clustering-correlation (full_tomo = 0, default) and cross-clustering-correlation (full_tomo=1) */
     double lmin; /* ell min  */
     double lmax; /* ell max  */
     int ncl;/* number of ell bins */
@@ -171,4 +172,4 @@ typedef struct {
     char ls[8]; /* Calculate shear-position components */
     char ll[8]; /* Calculate position-position components */
 } covpar;
-covpar covparams = {.lin_bins = 0, .ss ="false", .ls ="false", .ll ="false"};
+covpar covparams = {.lin_bins = 0, .full_tomo = 0, .ss ="false", .ls ="false", .ll ="false"};
