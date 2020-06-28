@@ -147,7 +147,7 @@ typedef struct {
   double bias_zphot_magnification[10];
 }
 nuisancepara;
-nuisancepara nuisance ={.c1rhocrit_ia = 0.01389,
+nuisancepara nuisance ={.c1rhocrit_ia = 0.013873073650776856,
   .shear_calibration_m = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
   .sigma_zphot_shear = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
   .bias_zphot_shear = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
