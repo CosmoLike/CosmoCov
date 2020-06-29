@@ -88,6 +88,28 @@ int main(int argc, char** argv)
     cNG = 0;
   }
 
+// Print C_ells: added by Anna Porredon
+
+  // double ell;
+  // double C_ell;
+  // printf("computing de C_ells\n");
+  // for (i=0;i<tomo.clustering_Npowerspectra; i++){
+  //   for (n=i;n<tomo.clustering_Npowerspectra; n++){
+  //     sprintf(OUTFILE,"%sC_ells_bin%d_%d_%s.txt",covparams.outdir,i+1,n+1,covparams.filename);
+  //     F1 = fopen(OUTFILE,"w");
+  //     ell = 2;
+  //     for (l=0;l<7999; l++){
+  //       C_ell = C_cl_tomo_nonlimber_interp(ell,i,n);
+  //       fprintf(F1,"%1f   %g\n",ell, C_ell);
+  //       ell = ell + 1;
+  //     } 
+  //     fclose(F1);
+  //   }
+  // }
+
+// #########################################
+
+
   printf("running multi_covariance_real with NG = %d, cNG = %d\n",NG, cNG);
 
   like.Ntheta=covparams.ntheta;
@@ -100,6 +122,23 @@ int main(int argc, char** argv)
   dtheta=create_double_vector(0,Ntheta-1);
   theta=create_double_vector(0,Ntheta-1);
   set_angular_binning(thetamin,dtheta);
+
+// Print wtheta: added by Anna Porredon
+
+  double wtheta;
+  printf("computing wtheta\n");
+  for (i=0;i<tomo.clustering_Npowerspectra; i++){
+    sprintf(OUTFILE,"%swtheta_bin%d_%d_%s.txt",covparams.outdir,i+1,i+1,covparams.filename);
+    F1 = fopen(OUTFILE,"w");
+    fprintf(F1,"# average theta [rad]     wtheta\n");
+    for (n=0;n<Ntheta; n++){
+      wtheta = w_tomo_fullsky(n,i,i);
+      fprintf(F1,"%g   %g\n",(thetamin[n]+thetamin[n+1])/2, wtheta);
+    } 
+    fclose(F1);    
+  }
+
+// #########################################
 
   printf("numbers of powers: %d, %d, %d \n",tomo.shear_Npowerspectra, tomo.clustering_Npowerspectra,tomo.ggl_Npowerspectra);
   int k=1;
