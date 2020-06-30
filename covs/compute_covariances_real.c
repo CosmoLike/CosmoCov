@@ -88,6 +88,29 @@ int main(int argc, char** argv)
     cNG = 0;
   }
 
+// Print P_k: ################
+
+  double real_coverH0 = cosmology.coverH0 / cosmology.h0; // unit Mpc
+  static double logkmin = 0., logkmax = 0., dk = 0. ;
+  double lgk, k_i, Pk_i ; 
+  logkmin = log(limits.k_min_cH0);
+  logkmax = log(limits.k_max_cH0);
+  dk = (logkmax - logkmin)/(Ntable.N_k_nlin);
+
+  sprintf(OUTFILE,"%sPk_z0_%s.txt",covparams.outdir,covparams.filename);
+  F1 = fopen(OUTFILE,"w");
+  for (lgk = logkmin, i = 0; i< Ntable.N_k_nlin; i++,lgk+=dk){
+    k_i = exp(lgk)/cosmology.coverH0;
+    Pk_i = p_lin(exp(lgk),1.0)*pow(cosmology.coverH0,3.0);
+    fprintf(F1,"%e %e\n",k_i,Pk_i);
+ }
+ fclose(F1);
+
+
+
+// ############################
+
+
 // Print C_ells: added by Anna Porredon
 
   // double ell;
@@ -125,18 +148,18 @@ int main(int argc, char** argv)
 
 // Print wtheta: added by Anna Porredon
 
-  double wtheta;
-  printf("computing wtheta\n");
-  for (i=0;i<tomo.clustering_Npowerspectra; i++){
-    sprintf(OUTFILE,"%swtheta_bin%d_%d_%s.txt",covparams.outdir,i+1,i+1,covparams.filename);
-    F1 = fopen(OUTFILE,"w");
-    fprintf(F1,"# average theta [rad]     wtheta\n");
-    for (n=0;n<Ntheta; n++){
-      wtheta = w_tomo_fullsky(n,i,i);
-      fprintf(F1,"%g   %g\n",(thetamin[n]+thetamin[n+1])/2, wtheta);
-    } 
-    fclose(F1);    
-  }
+  // double wtheta;
+  // printf("computing wtheta\n");
+  // for (i=0;i<tomo.clustering_Npowerspectra; i++){
+  //   sprintf(OUTFILE,"%swtheta_bin%d_%d_%s.txt",covparams.outdir,i+1,i+1,covparams.filename);
+  //   F1 = fopen(OUTFILE,"w");
+  //   fprintf(F1,"# average theta [rad]     wtheta\n");
+  //   for (n=0;n<Ntheta; n++){
+  //     wtheta = w_tomo_fullsky(n,i,i);
+  //     fprintf(F1,"%g   %g\n",(thetamin[n]+thetamin[n+1])/2, wtheta);
+  //   } 
+  //   fclose(F1);    
+  // }
 
 // #########################################
 
