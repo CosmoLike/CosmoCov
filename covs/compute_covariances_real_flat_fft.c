@@ -54,6 +54,12 @@ by CosmoLike developers
 
 int main(int argc, char** argv)
 {
+
+  if (argc != 3){
+    fprintf(stderr, "Syntax: %s  block_number  config_file\n", argv[0]);
+    exit(1);
+  }
+
   int hit=atoi(argv[1]);
   char *inifile;
   inifile = argv[2];
