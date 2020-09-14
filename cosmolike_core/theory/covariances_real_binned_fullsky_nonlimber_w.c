@@ -795,8 +795,8 @@ void cov_cl_cl_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,i
       }
     }
 
-    if(FLAG_NG){
-      for (l2 = 0; l2 < LMAX; l2++){
+    if(FLAG_NG && (l1>0)){
+      for (l2 = 1; l2 < LMAX; l2++){
         tri = bin_cov_NG_cl_cl_tomo(l1_double,(double)l2,z1,z2,z3,z4);
         for(i=0; i<like.Ntheta ; i++){
           triP = tri * Pl[i][l1];
