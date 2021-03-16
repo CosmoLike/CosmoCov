@@ -66,7 +66,7 @@ double amax_lens(int i){
 
 /************ redshift overlap tests, allowed tomography combinations **********/
 int test_kmax(double l, int zl){ //test whether the (l,zl) bin is in the linear clustering regime - return 1 if true, 0 otherwise
-  static double chiref[10] = {-1.};
+  static double chiref[20] = {-1.};
   if (chiref[0] < 0){
     int i;
     for (i = 0; i < tomo.clustering_Nbin; i++){
@@ -85,7 +85,7 @@ int test_zoverlap(int zl, int zs){ //test whether source bin zs is behind lens b
 }
 
 int N_ggl(int zl, int zs){
-  static int N[10][10] = {-42};
+  static int N[20][20] = {-42};
   if (N[0][0] < 0){
     int i, j,n;
     n = 0;
@@ -100,7 +100,7 @@ int N_ggl(int zl, int zs){
 }
 
 int ZL(int Nbin){
-  static int N[100] = {-42};
+  static int N[400] = {-42};
   if (N[0] < -1){
     int i,j,n = 0;
     for (i = 0; i < tomo.clustering_Nbin; i ++){
@@ -112,7 +112,7 @@ int ZL(int Nbin){
   return N[Nbin];
 }
 int ZS(int Nbin){
-  static int N[100] = {-42};
+  static int N[400] = {-42};
   if (N[0] < -1){
     int i,j,n = 0;
     for (i = 0; i < tomo.clustering_Nbin; i ++){
@@ -125,7 +125,7 @@ int ZS(int Nbin){
 }
 
 int N_shear (int z1, int z2){ //find shear tomography bin number N_shear of tomography combination (z1,z2)
-  static int N[10][10] = {-42};
+  static int N[20][20] = {-42};
   if (N[0][0] < -1){
     int i, j,n = 0;
     for (i = 0; i < tomo.shear_Nbin; i ++){
@@ -139,7 +139,7 @@ int N_shear (int z1, int z2){ //find shear tomography bin number N_shear of tomo
   return N[z1][z2];
 }
 int Z1(int Nbin){// find z1 of tomography combination (z1,z2) constituting shear tomography bin Nbin
-  static int N[55] = {-42};
+  static int N[210] = {-42};
   if (N[0] < -1){
     int i, j,n = 0;
     for (i = 0; i < tomo.shear_Nbin; i ++){
@@ -153,7 +153,7 @@ int Z1(int Nbin){// find z1 of tomography combination (z1,z2) constituting shear
 }
 
 int Z2(int Nbin){ // find z2 of tomography combination (z1,z2) constituting shear tomography bin Nbin
-  static int N[55]={-42};
+  static int N[210]={-42};
   if (N[0] < -1){
     int i, j,n = 0;
     for (i = 0; i < tomo.shear_Nbin; i ++){
@@ -168,7 +168,7 @@ int Z2(int Nbin){ // find z2 of tomography combination (z1,z2) constituting shea
 
 
 int Zcl1(int Nbin){// find zcl1 of tomography combination (zcl1,zcl2) constituting galaxy clustering tomography bin Nbin
-  static int N[55] = {-42};
+  static int N[210] = {-42};
   if (N[0] < -1){
     int i, j,n = 0;
     for (i = 0; i < tomo.clustering_Nbin; i ++){
@@ -182,7 +182,7 @@ int Zcl1(int Nbin){// find zcl1 of tomography combination (zcl1,zcl2) constituti
 }
 
 int Zcl2(int Nbin){ // find zcl2 of tomography combination (zcl1,zcl2) constituting galaxy clustering tomography bin Nbin
-  static int N[55]={-42};
+  static int N[210]={-42};
   if (N[0] < -1){
     int i, j,n = 0;
     for (i = 0; i < tomo.clustering_Nbin; i ++){
@@ -196,7 +196,7 @@ int Zcl2(int Nbin){ // find zcl2 of tomography combination (zcl1,zcl2) constitut
 }
 
 int N_clustering_tomo (int z1, int z2){ //find shear tomography bin number N_shear of tomography combination (z1,z2)
-  static int N[10][10] = {-42};
+  static int N[20][20] = {-42};
   if (N[0][0] < -1){
     int i, j,n = 0;
     for (i = 0; i < tomo.clustering_Nbin; i ++){
@@ -277,8 +277,8 @@ double zdistr_photoz(double zz,int j) //returns n(ztrue | j), works only with bi
   static double zhisto_max,zhisto_min;
   static nuisancepara N;
   static int zbins = -1;
-  static gsl_spline * photoz_splines[11];
-  static gsl_interp_accel * photoz_accel[11];
+  static gsl_spline * photoz_splines[21];
+  static gsl_interp_accel * photoz_accel[21];
 
   if (table==0){
     update_nuisance(&N);
@@ -313,7 +313,7 @@ double zdistr_photoz(double zz,int j) //returns n(ztrue | j), works only with bi
     for (int i = 0;i < zbins; i++){
       z_v[i] = zhisto_min+(i+0.5)*da;
     }
-    double array[4], NORM[11],norm,x1,x2,eta,outfrac;
+    double array[4], NORM[21],norm,x1,x2,eta,outfrac;
     //the outlier fraction (outfrac) should be specified externally. This is a temporary hack.
     for (i = 0; i< tomo.shear_Nbin; i++){
       array[0] =tomo.shear_zmin[i];
@@ -465,8 +465,8 @@ double pf_photoz(double zz,int j) //returns n(ztrue, j), works only with binned 
   static double zhisto_max,zhisto_min;
   static nuisancepara N;
   static int zbins = -1;
-  static gsl_spline * photoz_splines[11];
-  static gsl_interp_accel * photoz_accel[11];
+  static gsl_spline * photoz_splines[21];
+  static gsl_interp_accel * photoz_accel[21];
 
   if (table==0){
     update_nuisance(&N);
@@ -498,7 +498,7 @@ double pf_photoz(double zz,int j) //returns n(ztrue, j), works only with binned 
       z_v[i] = zhisto_min+(i+0.5)*da;
     }
 
-    double array[4], NORM[11],norm,x1,x2,eta,outfrac,zi;
+    double array[4], NORM[21],norm,x1,x2,eta,outfrac,zi;
     //the outlier fraction (outfrac) should be specified externally. This is a temporary hack.
 
     for (i = 0; i< tomo.clustering_Nbin; i++){
@@ -577,10 +577,10 @@ double nlens(int j) //returns n_gal for clustering tomography bin j, works only 
   if (table ==0 ||table[0][0] != survey.n_lens){
     array[0] = pf_photoz(0.,0);
     table   = create_double_matrix(0, tomo.clustering_Nbin, 0, 1);
-    printf("redshift.clustering_photoz = 4, using tabulated tomo.n_lens =");
+    printf("redshift.clustering_photoz = 4, using tabulated tomo.n_lens_ij[i][i] =");
     for (i = 0; i< tomo.clustering_Nbin; i++){
-      printf(" %e,", tomo.n_lens[i]);
-      table[i+1][0] = tomo.n_lens[i];
+      printf(" %e,", tomo.n_lens_ij[i][i]);
+      table[i+1][0] = tomo.n_lens_ij[i][i];
     }
     printf("\n");
     table[0][0] = survey.n_lens;
