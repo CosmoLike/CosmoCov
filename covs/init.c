@@ -136,12 +136,6 @@ void set_cov_parameters(char *covparamfile, int output)
   char line[256];
   int iline=0;
 
-  for(int i=0; i<20; i++){
-    for(int j=0; j<20; j++){
-      tomo.n_lens_ij[i][j]=0.;
-    }
-  }
-
   FILE* input = fopen(covparamfile, "r");
   while(fgets(line, 256, input) != NULL)
   {
@@ -455,6 +449,12 @@ void set_survey_parameters(char *surveyfile, int output)
   int iline=0,i,j;
   double dummy_var;
 
+  for(int i=0; i<20; i++){
+    for(int j=0; j<20; j++){
+      tomo.n_lens_ij[i][j]=0.;
+    }
+  }
+  
   FILE* input = fopen(surveyfile, "r");
   while(fgets(line, 256, input) != NULL)
   {
