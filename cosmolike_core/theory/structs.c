@@ -70,12 +70,11 @@ typedef struct {
   int clustering_Npowerspectra;// number of tomography power spectra+2+3+...+Nbin
   double clustering_zmax[20];
   double clustering_zmin[20];
-  double n_lens[20];
+  // double n_lens[20];
   double n_lens_ij[20][20];
   int ggl_Npowerspectra;// number of ggl tomography combinations
 }tomopara;
-tomopara tomo = {.n_source = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
-                 .n_lens = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.}};
+tomopara tomo = {.n_source = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.}};
 
 typedef struct {
   int shear_photoz;

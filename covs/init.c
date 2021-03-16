@@ -613,11 +613,10 @@ void set_survey_parameters(char *surveyfile, int output)
           if (i<tomo.clustering_Nbin)
           {
             sscanf(p, "%lf", &var);
-            tomo.n_lens[i]=var;
             tomo.n_lens_ij[i][i]=var;
             if(output==1)
             {
-              printf("tomo.n_lens[%d]=%f \n",i,tomo.n_lens[i]);
+              printf("tomo.n_lens_ij[%d][%d]=%f \n",i,i,tomo.n_lens_ij[i][i]);
             }
           }
 /*          if (i>0)

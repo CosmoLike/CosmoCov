@@ -577,10 +577,10 @@ double nlens(int j) //returns n_gal for clustering tomography bin j, works only 
   if (table ==0 ||table[0][0] != survey.n_lens){
     array[0] = pf_photoz(0.,0);
     table   = create_double_matrix(0, tomo.clustering_Nbin, 0, 1);
-    printf("redshift.clustering_photoz = 4, using tabulated tomo.n_lens =");
+    printf("redshift.clustering_photoz = 4, using tabulated tomo.n_lens_ij[i][i] =");
     for (i = 0; i< tomo.clustering_Nbin; i++){
-      printf(" %e,", tomo.n_lens[i]);
-      table[i+1][0] = tomo.n_lens[i];
+      printf(" %e,", tomo.n_lens_ij[i][i]);
+      table[i+1][0] = tomo.n_lens_ij[i][i];
     }
     printf("\n");
     table[0][0] = survey.n_lens;

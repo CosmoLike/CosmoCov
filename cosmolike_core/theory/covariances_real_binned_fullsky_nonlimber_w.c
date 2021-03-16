@@ -841,16 +841,10 @@ double func_for_cov_G_cl(double l, int *ar){
   C14 = C_cl_tomo_nonlimber_interp(l,n1,n4);
   C23 = C_cl_tomo_nonlimber_interp(l,n2,n3);
 
-  double nlens13, nlens14, nlens23, nlens24;
-  nlens13 = tomo.n_lens_ij[n1][n3];
-  nlens14 = tomo.n_lens_ij[n1][n4];
-  nlens23 = tomo.n_lens_ij[n2][n3];
-  nlens24 = tomo.n_lens_ij[n2][n4];  
-
-  if (nlens13>0.){N13= nlens13/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);}
-  if (nlens14>0.){N14= nlens14/(nlens(n1)*nlens(n4)*survey.n_gal_conversion_factor);}
-  if (nlens23>0.){N23= nlens23/(nlens(n2)*nlens(n3)*survey.n_gal_conversion_factor);}
-  if (nlens24>0.){N24= nlens24/(nlens(n2)*nlens(n4)*survey.n_gal_conversion_factor);}
+  N13= tomo.n_lens_ij[n1][n3]/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);
+  N14= tomo.n_lens_ij[n1][n4]/(nlens(n1)*nlens(n4)*survey.n_gal_conversion_factor);
+  N23= tomo.n_lens_ij[n2][n3]/(nlens(n2)*nlens(n3)*survey.n_gal_conversion_factor);
+  N24= tomo.n_lens_ij[n2][n4]/(nlens(n2)*nlens(n4)*survey.n_gal_conversion_factor);
 
   return (C13*C24+C13*N24+N13*C24 + C14*C23+C14*N23+N14*C23)*4.*M_PI/(survey.area*survey.area_conversion_factor* (2.*l+1.));
 }
@@ -866,12 +860,8 @@ double func_for_cov_G_cl_gl(double l, int *ar){
   C14 = C_ggl_IA_tab(l,n1,n4);
   C23 = C_cl_tomo_nonlimber_interp(l,n2,n3);
 
-  double nlens13, nlens23;
-  nlens13 = tomo.n_lens_ij[n1][n3];
-  nlens23 = tomo.n_lens_ij[n2][n3];
-
-  if (nlens13>0.){N13= nlens13/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);}
-  if (nlens23>0.){N23= nlens23/(nlens(n2)*nlens(n3)*survey.n_gal_conversion_factor);}
+  N13= tomo.n_lens_ij[n1][n3]/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);
+  N23= tomo.n_lens_ij[n2][n3]/(nlens(n2)*nlens(n3)*survey.n_gal_conversion_factor);
 
   return (C13*C24+C13*N24+C24*N13+C14*C23+C14*N23+C23*N14)*4.*M_PI/(survey.area*survey.area_conversion_factor* (2.*l+1.));
 }
@@ -900,10 +890,7 @@ double func_for_cov_G_gl(double l, int *ar){
   C14 = C_ggl_IA_tab(l,n1,n4);
   C23 = C_ggl_IA_tab(l,n3,n2);
 
-  double nlens13;
-  nlens13 = tomo.n_lens_ij[n1][n3];
-
-  if (nlens13>0.){N13= nlens13/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);}
+  N13= tomo.n_lens_ij[n1][n3]/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);
   if (n2 == n4){N24= pow(survey.sigma_e,2.0)/(2.0*nsource(n2)*survey.n_gal_conversion_factor);}
 
   return (C13*C24+C13*N24+N13*C24 + C14*C23+C14*N23+N14*C23)*4.*M_PI/(survey.area*survey.area_conversion_factor* (2.*l+1.));
