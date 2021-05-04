@@ -42,10 +42,15 @@ void run_cov_clustering_real_bin(char *OUTFILE, char *PATH, double *theta, doubl
   char filename[300];
   sprintf(filename,"%s%s_%d",PATH,OUTFILE,start);
   F1 =fopen(filename,"w");
-  z1 = n1; z2 = n1;
-  //  printf("\nN_cl_1 = %d \n", n1);
-  z3 = n2; z4 = n2;
-  printf("N_cl_1 = %d, N_cl_2 = %d\n", n1,n2);
+  if(covparams.full_tomo){
+    z1 = Zcl1(n1); z2 = Zcl2(n1);
+    z3 = Zcl1(n2); z4 = Zcl2(n2);
+    printf("N_cl_1 = %d (%d, %d), N_cl_2 = %d (%d, %d)\n", n1,z1,z2, n2,z3,z4);
+  } else{
+    z1 = n1; z2 = n1;
+    z3 = n2; z4 = n2;
+    printf("N_cl_1 = %d, N_cl_2 = %d\n", n1,n2);
+  }
 
   double **cov_fullsky_G = 0, **cov_fullsky_NG = 0;
   cov_fullsky_G = create_double_matrix(0, like.Ntheta-1, 0, like.Ntheta-1);
@@ -257,8 +262,13 @@ void run_cov_clustering_shear_real_bin(char *OUTFILE, char *PATH, double *theta,
   char filename[300];
   sprintf(filename,"%s%s_%d",PATH,OUTFILE,start);
   F1 =fopen(filename,"w");
-  z1 = n1; z2 = n1;
-  printf("\nN_cl = %d \n", n1);
+  if(covparams.full_tomo){
+    z1 = Zcl1(n1); z2 = Zcl2(n1);
+    printf("\nN_cl = %d (%d, %d) \n", n1,z1,z2);
+  } else{
+    z1 = n1; z2 = n1;
+    printf("\nN_cl = %d \n", n1);
+  }
   z3 = Z1(n2); z4 = Z2(n2);
   printf("N_shear = %d (%d, %d)\n", n2,z3,z4);
 
@@ -310,8 +320,13 @@ void run_cov_clustering_ggl_real_bin(char *OUTFILE, char *PATH, double *theta, d
   char filename[300];
   sprintf(filename,"%s%s_%d",PATH,OUTFILE,start);
   F1 =fopen(filename,"w");
-  z1 = n1; z2 = n1;
-  printf("\nN_cl_1 = %d \n", n1);
+  if(covparams.full_tomo){
+    z1 = Zcl1(n1); z2 = Zcl2(n1);
+    printf("\nN_cl = %d (%d, %d) \n", n1,z1,z2);
+  } else{
+    z1 = n1; z2 = n1;
+    printf("\nN_cl = %d \n", n1);
+  }
   zl = ZL(n2); zs = ZS(n2);
   printf("N_tomo_2 = %d (%d, %d)\n", n2,zl,zs);
 

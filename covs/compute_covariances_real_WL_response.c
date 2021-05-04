@@ -66,9 +66,9 @@ int main(int argc, char** argv)
 
   set_cosmological_parameters(inifile,1);
   set_survey_parameters(inifile,1);
+  set_cov_parameters(inifile,1);
 
   init_source_sample(redshift.shear_REDSHIFT_FILE,tomo.shear_Nbin);
-  set_cov_parameters(inifile,1);
   //here: setting values internally
 
   int NG, cNG;

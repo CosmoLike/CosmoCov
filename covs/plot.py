@@ -29,6 +29,9 @@ if __name__ == '__main__':
 	c_g, c_ng, ndata = get_cov(covfile)	
 	cov = c_ng+c_g
 
+	print(cov)
+	np.savetxt(covfile+".txt", cov.T)
+
 	b = np.sort(LA.eigvals(cov))
 	print("min+max eigenvalues cov: %e, %e"%(np.min(b), np.max(b)))
 	if(np.min(b)<=0.):
@@ -67,5 +70,5 @@ if __name__ == '__main__':
 	# ax.text(905, 595, r'$\gamma_t$', fontsize=14)
 	# ax.text(905, 845, r'$w$', fontsize=14)
 	plt.savefig(plot_path,dpi=2000)
-	plt.show()
+	# plt.show()
 	print("Plot saved as %s"%(plot_path))

@@ -147,7 +147,7 @@ typedef struct {
   double bias_zphot_magnification[10];
 }
 nuisancepara;
-nuisancepara nuisance ={.c1rhocrit_ia = 0.01389,
+nuisancepara nuisance ={.c1rhocrit_ia = 0.013873073650776856,
   .shear_calibration_m = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
   .sigma_zphot_shear = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
   .bias_zphot_shear = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
@@ -159,6 +159,7 @@ typedef struct {
     double tmax; /* Theta max (arcmin) */
     int ntheta;  /* number of theta bins */
     int lin_bins;/* switch between log-binning (lin_bins = 0, default) and linear binning (lin_bins =1)*/
+    int full_tomo;/* switch between auto-clustering-correlation (full_tomo = 0, default) and cross-clustering-correlation (full_tomo=1) */
     double lmin; /* ell min  */
     double lmax; /* ell max  */
     int ncl;/* number of ell bins */
@@ -171,4 +172,4 @@ typedef struct {
     char ls[8]; /* Calculate shear-position components */
     char ll[8]; /* Calculate position-position components */
 } covpar;
-covpar covparams = {.lin_bins = 0, .ss ="false", .ls ="false", .ll ="false"};
+covpar covparams = {.lin_bins = 0, .full_tomo = 0, .ss ="false", .ls ="false", .ll ="false"};

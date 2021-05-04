@@ -91,7 +91,11 @@ The ini files contain all the settings, including
     blocks of the covariance involving the shape-shape (ss),
     position-shape (ls), position-position (ll) angular correlation
     functions. Computing 3x2pt covariance means setting all of
-    them as `true`.
+    them as `true`,
+
+  - `linear_binning`: 0 (default) or 1, the optional switch of computing covariances in linear angular binning, currently only supported in curved sky covariance routine,
+
+  - `full_tomo`: 0 (default) or 1, the optional switch of including the full cross tomographic bin clustering correlations, rather than the default auto clustering correlations, currently only supported in curved sky covariance routine.
 
 ### Output
 The covariances will be output as separate blocks in `output/out_cov_.../`, with each block representing the covariance matrix of two 2-point functions. The header of each file contains a list of papers to be cited based on the module used.

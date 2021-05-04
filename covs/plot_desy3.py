@@ -29,6 +29,9 @@ if __name__ == '__main__':
 	c_g, c_ng, ndata = get_cov(covfile)	
 	cov = c_ng+c_g
 
+	print(cov)
+	# np.savetxt(covfile+".txt", cov.T)
+
 	b = np.sort(LA.eigvals(cov))
 	print("min+max eigenvalues cov: %e, %e"%(np.min(b), np.max(b)))
 	if(np.min(b)<=0.):

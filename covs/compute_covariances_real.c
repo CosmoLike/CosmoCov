@@ -52,6 +52,12 @@ by CosmoLike developers
 
 int main(int argc, char** argv)
 {
+
+  if (argc != 3){
+    fprintf(stderr, "Syntax: %s  block_number  config_file\n", argv[0]);
+    exit(1);
+  }
+
   int hit=atoi(argv[1]);
   char *inifile;
   inifile = argv[2];
@@ -67,10 +73,10 @@ int main(int argc, char** argv)
 
   set_cosmological_parameters(inifile,1);
   set_survey_parameters(inifile,1);
-
+  set_cov_parameters(inifile,1);
+  
   init_source_sample(redshift.shear_REDSHIFT_FILE,tomo.shear_Nbin);
   init_lens_sample(redshift.clustering_REDSHIFT_FILE,tomo.clustering_Nbin);
-  set_cov_parameters(inifile,1);
   //here: setting values internally
 
   int NG, cNG;
@@ -90,21 +96,21 @@ int main(int argc, char** argv)
 
 // Print P_k: ################
 
-  double real_coverH0 = cosmology.coverH0 / cosmology.h0; // unit Mpc
-  static double logkmin = 0., logkmax = 0., dk = 0. ;
-  double lgk, k_i, Pk_i ; 
-  logkmin = log(limits.k_min_cH0);
-  logkmax = log(limits.k_max_cH0);
-  dk = (logkmax - logkmin)/(Ntable.N_k_nlin);
+ //  double real_coverH0 = cosmology.coverH0 / cosmology.h0; // unit Mpc
+ //  static double logkmin = 0., logkmax = 0., dk = 0. ;
+ //  double lgk, k_i, Pk_i ; 
+ //  logkmin = log(limits.k_min_cH0);
+ //  logkmax = log(limits.k_max_cH0);
+ //  dk = (logkmax - logkmin)/(Ntable.N_k_nlin);
 
-  sprintf(OUTFILE,"%sPk_z0_%s.txt",covparams.outdir,covparams.filename);
-  F1 = fopen(OUTFILE,"w");
-  for (lgk = logkmin, i = 0; i< Ntable.N_k_nlin; i++,lgk+=dk){
-    k_i = exp(lgk)/cosmology.coverH0;
-    Pk_i = p_lin(exp(lgk),1.0)*pow(cosmology.coverH0,3.0);
-    fprintf(F1,"%e %e\n",k_i,Pk_i);
- }
- fclose(F1);
+ //  sprintf(OUTFILE,"%sPk_z0_%s.txt",covparams.outdir,covparams.filename);
+ //  F1 = fopen(OUTFILE,"w");
+ //  for (lgk = logkmin, i = 0; i< Ntable.N_k_nlin; i++,lgk+=dk){
+ //    k_i = exp(lgk)/cosmology.coverH0;
+ //    Pk_i = p_lin(exp(lgk),1.0)*pow(cosmology.coverH0,3.0);
+ //    fprintf(F1,"%e %e\n",k_i,Pk_i);
+ // }
+ // fclose(F1);
 
 
 
@@ -120,8 +126,8 @@ int main(int argc, char** argv)
   //   for (n=i;n<tomo.clustering_Npowerspectra; n++){
   //     sprintf(OUTFILE,"%sC_ells_bin%d_%d_%s.txt",covparams.outdir,i+1,n+1,covparams.filename);
   //     F1 = fopen(OUTFILE,"w");
-  //     ell = 2;
-  //     for (l=0;l<7999; l++){
+  //     ell = 0;
+  //     for (l=0;l<500; l++){
   //       C_ell = C_cl_tomo_nonlimber_interp(ell,i,n);
   //       fprintf(F1,"%1f   %g\n",ell, C_ell);
   //       ell = ell + 1;
