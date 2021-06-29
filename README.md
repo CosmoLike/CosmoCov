@@ -1,4 +1,4 @@
-# CosmoCov
+# CosmoCov (Cibola Edition) ... for more compplex covariances, please go to the CosmoCov_Saguaro_Edition repo 
 Xiao Fang, Elisabeth Krause, Tim Eifler
 
 Configuration Space Covariances for Projected Galaxy 2-Point Statistics, built on **CosmoLike**. We provide a flat sky covariance module, computed with the 2D-FFTLog algorithm, and a curved sky covariance module. We also provide a response covariance module written by Alex Barreira and Elisabeth Krause.
@@ -71,7 +71,7 @@ The ini files contain all the settings, including
 
   - `c_footprint_file`: (optional) a footprint file containing the mask power spectrum, which is read-in in `C_survey_window` in `cosmolike_core/theory/covariances_3D.c`; note that the normalization of the power spectrum is automatically adjusted,
 
-  - `clustering_REDSHIFT_FILE, shear_REDSHIFT_FILE, lens_tomobins, source_tomobins, lens_n_gal, source_n_gal`: the lens and source galaxy samples (file paths, the numbers of tomographic bins, the number densities in each bin),
+  - `clustering_REDSHIFT_FILE, shear_REDSHIFT_FILE, lens_tomobins, source_tomobins, lens_n_gal, source_n_gal`: the lens and source galaxy samples (file paths, the numbers of tomographic bins, the number densities in each bin). The redshift file has (number of tomo bin + 1) columns, in which the 1st column is the z_min of each z bin.
 
   - `sigma_e`: the total shape noise of the weak lensing measurement,
 
