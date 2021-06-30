@@ -250,7 +250,7 @@ double C_survey_window(int l){
         double tmp2;
         fscanf(F1,"%d %le\n",&tmp, &tmp2);
         Cl[i] = tmp2;
-        if(i>0) {Cl[i] /= Cl[0]};
+        if(i>0) {Cl[i] /= Cl[0];}
       }
       Cl[0] = 1.;
       fclose(F1);
