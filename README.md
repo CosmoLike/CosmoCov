@@ -1,4 +1,4 @@
-# CosmoCov (Cibola Edition) ... for more compplex covariances, please go to the CosmoCov_Saguaro_Edition repo 
+# CosmoCov (Cibola Edition) ... for more complex covariances, please go to the CosmoCov_Saguaro_Edition repo 
 Xiao Fang, Elisabeth Krause, Tim Eifler
 
 Configuration Space Covariances for Projected Galaxy 2-Point Statistics, built on **CosmoLike**. We provide a flat sky covariance module, computed with the 2D-FFTLog algorithm, and a curved sky covariance module. We also provide a response covariance module written by Alex Barreira and Elisabeth Krause.
