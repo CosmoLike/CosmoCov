@@ -99,25 +99,30 @@ double growfac(double a)
   static double *ai;
   static double *table;
   double res;
-  
-  gsl_interp *intf=gsl_interp_alloc(gsl_interp_linear,Ntable.N_a);
-  gsl_interp_accel *acc=gsl_interp_accel_alloc();
-  
+
+  static gsl_interp *intf;
+  static gsl_interp_accel *acc;
+
+  // gsl_interp *intf=gsl_interp_alloc(gsl_interp_linear,Ntable.N_a);
+  // gsl_interp_accel *acc=gsl_interp_accel_alloc();
+
   if (recompute_expansion(C))
   {
+    if(intf==0) intf=gsl_interp_alloc(gsl_interp_linear,Ntable.N_a);
+    if(acc==0) acc=gsl_interp_accel_alloc();
 
     if(table!=0) free_double_vector(table,0, Ntable.N_a-1);
-    if(ai!=0) free_double_vector(ai,0, Ntable.N_a-1);    
+    if(ai!=0) free_double_vector(ai,0, Ntable.N_a-1);
     ai=create_double_vector(0, Ntable.N_a-1);
     table=create_double_vector(0, Ntable.N_a-1);
-    
+
     int i;
 
     const gsl_odeiv_step_type *T=gsl_odeiv_step_rkf45;
     gsl_odeiv_step *s=gsl_odeiv_step_alloc(T,2);
     gsl_odeiv_control *c=gsl_odeiv_control_y_new(1.e-6,0.0);
     gsl_odeiv_evolve *e=gsl_odeiv_evolve_alloc(2);
-    
+
     double t=MINA;            //start a
     double t1=1.1;                //final a
     double h=1.e-6;              //initial step size
@@ -125,25 +130,28 @@ double growfac(double a)
     double norm;
     double par[0]={};
     gsl_odeiv_system sys={func_for_growfac,NULL,2,&par};
-    
+
     for (i=1;i<=Ntable.N_a;i++) {
       ai[i-1]=i*t1/(1.*Ntable.N_a);
-      while(t<ai[i-1]) 
+      while(t<ai[i-1])
         gsl_odeiv_evolve_apply(e,c,s,&sys,&t,ai[i-1],&h,y);
       if (i==1) norm=y[0]/ai[i-1];
       table[i-1]=y[0]/norm;
     }
-    
+
     gsl_odeiv_evolve_free(e);
     gsl_odeiv_control_free(c);
     gsl_odeiv_step_free(s);
     update_cosmopara(&C);
-	 
+    
+    
+    gsl_interp_init(intf,ai,table,Ntable.N_a);
+      
   }
-  gsl_interp_init(intf,ai,table,Ntable.N_a);
+  // gsl_interp_init(intf,ai,table,Ntable.N_a);
   res=gsl_interp_eval(intf,ai,table,a,acc);
-  gsl_interp_accel_free(acc);
-  gsl_interp_free(intf);
+  // gsl_interp_accel_free(acc);
+  // gsl_interp_free(intf);
   return(res);
 }
 
