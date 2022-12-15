@@ -17,6 +17,9 @@ cov_fft:
 cov_curved:
 	gcc -o cov compute_covariances_real.c $(cfftlog) $(opt_home)
 
+wtheta:
+	gcc -o wtheta compute_wtheta_real.c $(cfftlog) $(opt_home)
+
 response:
 	gcc -o cov_response compute_covariances_real_WL_response.c  $(opt_home) -lpython2.7
 

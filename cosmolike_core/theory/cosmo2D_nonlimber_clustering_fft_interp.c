@@ -361,7 +361,8 @@ double w_tomo_fullsky(int nt, int ni, int nj){
             gsl_sf_legendre_Pl_array(LMAX, xmax[i],Pmax);
             //gsl_sf_legendre_Pl_array(LMAX, cos(like.theta[i]),Pmin);          
             for (int l = 1; l < LMAX; l ++){
-                //Pl[i][l] = (2*l+1.)/(4.*M_PI)*Pmin[l];
+                // Pl[i][l] = (2*l+1.)/(4.*M_PI)*Pmin[l];
+                // Pl[i][l] = (2*l+1.)/(4.*M_PI)*Pmax[l];
                 //Pl[i][l] = (2*l+1.)/(4.*M_PI)*gsl_sf_legendre_Pl(l,cos(like.theta[i]));
                 Pl[i][l] = 1./(4.*M_PI)*(Pmin[l+1]-Pmax[l+1]-Pmin[l-1]+Pmax[l-1])/(xmin[i]-xmax[i]);
             }

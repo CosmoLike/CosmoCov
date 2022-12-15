@@ -1451,6 +1451,7 @@ double Pdelta(double k_NL,double a)
     case 3: pdelta=p_lin(k_NL,a); break;
     case 4: pdelta=p_class(k_NL,a,1, &status); break; //halofit
     // case 4: pdelta=p_class(k_NL,a,0, &status); break; //linear
+    // case 4: pdelta=p_lin(k_NL,a); break; //linear
     case 5: k_nonlin=nonlinear_scale_computation(a);
     if (kintern<0.01) pdelta=2.0*constants.pi_sqr*Delta_NL_Halofit(kintern,a)/k_NL/k_NL/k_NL;
     else{

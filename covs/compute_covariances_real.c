@@ -52,12 +52,6 @@ by CosmoLike developers
 
 int main(int argc, char** argv)
 {
-
-  if (argc != 3){
-    fprintf(stderr, "Syntax: %s  block_number  config_file\n", argv[0]);
-    exit(1);
-  }
-
   int hit=atoi(argv[1]);
   char *inifile;
   inifile = argv[2];
@@ -73,10 +67,10 @@ int main(int argc, char** argv)
 
   set_cosmological_parameters(inifile,1);
   set_survey_parameters(inifile,1);
-  set_cov_parameters(inifile,1);
-  
+
   init_source_sample(redshift.shear_REDSHIFT_FILE,tomo.shear_Nbin);
   init_lens_sample(redshift.clustering_REDSHIFT_FILE,tomo.clustering_Nbin);
+  set_cov_parameters(inifile,1);
   //here: setting values internally
 
   int NG, cNG;
@@ -127,7 +121,7 @@ int main(int argc, char** argv)
   //     sprintf(OUTFILE,"%sC_ells_bin%d_%d_%s.txt",covparams.outdir,i+1,n+1,covparams.filename);
   //     F1 = fopen(OUTFILE,"w");
   //     ell = 0;
-  //     for (l=0;l<500; l++){
+  //     for (l=0;l<12289; l++){
   //       C_ell = C_cl_tomo_nonlimber_interp(ell,i,n);
   //       fprintf(F1,"%1f   %g\n",ell, C_ell);
   //       ell = ell + 1;
