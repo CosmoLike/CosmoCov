@@ -446,8 +446,15 @@ void set_survey_parameters(char *surveyfile, int output)
 {
 
   char line[256];
-  int iline=0,i;
+  int iline=0,i,j;
+  double dummy_var;
 
+  for(int i=0; i<20; i++){
+    for(int j=0; j<20; j++){
+      tomo.n_lens_ij[i][j]=0.;
+    }
+  }
+  
   FILE* input = fopen(surveyfile, "r");
   while(fgets(line, 256, input) != NULL)
   {
@@ -606,10 +613,10 @@ void set_survey_parameters(char *surveyfile, int output)
           if (i<tomo.clustering_Nbin)
           {
             sscanf(p, "%lf", &var);
-            tomo.n_lens[i]=var;
+            tomo.n_lens_ij[i][i]=var;
             if(output==1)
             {
-              printf("tomo.n_lens[%d]=%f \n",i,tomo.n_lens[i]);
+              printf("tomo.n_lens_ij[%d][%d]=%f \n",i,i,tomo.n_lens_ij[i][i]);
             }
           }
 /*          if (i>0)
@@ -629,6 +636,24 @@ void set_survey_parameters(char *surveyfile, int output)
       if(output==1)
       {
         printf("nlens %f \n",survey.n_lens);
+      }
+      continue;
+    }
+    else if(strcmp(name, "lens_n_ij")==0)
+    {
+      if(strcmp(survey.lensphotoz, "multihisto")==0)
+      {
+        sscanf(val, "%d[^,],%d[^,],%lf", &i, &j, &dummy_var);
+        tomo.n_lens_ij[i][j] = dummy_var;
+        tomo.n_lens_ij[j][i] = dummy_var;
+        if(output==1)
+        {
+          printf("tomo.n_lens_ij[%d][%d]=%f \n",i,j, tomo.n_lens_ij[i][j]);
+        }
+      }
+      else
+      {
+        printf("Error: lens_n_ij requires multihisto!\n"); exit(1);
       }
       continue;
     }

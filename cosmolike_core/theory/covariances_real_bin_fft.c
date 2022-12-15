@@ -557,11 +557,11 @@ double func_for_cov_G_cl(double l, int *ar){
   C24 = C_cl_tomo(l,n2,n4);
   C14 = C_cl_tomo(l,n1,n4);
   C23 = C_cl_tomo(l,n2,n3);
-  
-  if (n1 == n3){N13= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
-  if (n1 == n4){N14= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
-  if (n2 == n3){N23= 1./(nlens(n2)*survey.n_gal_conversion_factor);}
-  if (n2 == n4){N24= 1./(nlens(n2)*survey.n_gal_conversion_factor);}
+
+  N13= tomo.n_lens_ij[n1][n3]/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);
+  N14= tomo.n_lens_ij[n1][n4]/(nlens(n1)*nlens(n4)*survey.n_gal_conversion_factor);
+  N23= tomo.n_lens_ij[n2][n3]/(nlens(n2)*nlens(n3)*survey.n_gal_conversion_factor);
+  N24= tomo.n_lens_ij[n2][n4]/(nlens(n2)*nlens(n4)*survey.n_gal_conversion_factor);
 
   return (C13*C24+C13*N24+N13*C24 + C14*C23+C14*N23+N14*C23)*l*l*l;
 }
@@ -585,8 +585,9 @@ double func_for_cov_G_cl_gl(double l, int *ar){
   C24 = C_ggl_IA_tab(l,n2,n4);
   C14 = C_ggl_IA_tab(l,n1,n4);
   C23 = C_cl_tomo(l,n2,n3);
-  if (n1 == n3){N13= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
-  if (n2 == n3){N23= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
+  
+  N13= tomo.n_lens_ij[n1][n3]/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);
+  N23= tomo.n_lens_ij[n2][n3]/(nlens(n2)*nlens(n3)*survey.n_gal_conversion_factor);
   //printf("%lg, %lg, %lg, %lg, %lg, %lg, %lg\n", l, C13, C24, C14, C23, N13, N23);
   return (C13*C24+C13*N24+C24*N13+C14*C23+C14*N23+C23*N14)*l*l*l;
 }
@@ -634,7 +635,7 @@ double func_for_cov_G_gl(double l, int *ar){
   C14 = C_ggl_IA_tab(l,n1,n4);
   C23 = C_ggl_IA_tab(l,n3,n2);
   
-  if (n1 == n3){N13= 1./(nlens(n1)*survey.n_gal_conversion_factor);}
+  N13= tomo.n_lens_ij[n1][n3]/(nlens(n1)*nlens(n3)*survey.n_gal_conversion_factor);
   if (n2 == n4){N24= pow(survey.sigma_e,2.0)/(2.0*nsource(n2)*survey.n_gal_conversion_factor);}
   // printf("%lg, %lg, %lg, %lg, %lg, %lg, %lg\n", l, C13, C24, C14, C23, N13, N24);
   return (C13*C24+C13*N24+N13*C24 + C14*C23+C14*N23+N14*C23)*l*l*l;

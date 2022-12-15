@@ -43,7 +43,11 @@ To get started with computing covariances, follow the steps below:
     ```shell
     $ for i in {1..66}; do ./cov $i ini_files/cov_test_g.ini; done
     ```
-      
+    or
+    ```shell
+    $ echo {1..66} | xargs -n 1 -I{} ./cov {} ini_files/cov_test_g.ini
+    ```
+
     **Warning**: non-Gaussian covariances can take hours to compute for
     each block, so one may consider computing different blocks in
     parallel.

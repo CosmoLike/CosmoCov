@@ -63,18 +63,18 @@ cosmopara cosmology = {.A_s = 0., .sigma_8=0., .alpha_s =0.0, .M_nu =0., .Omega_
 typedef struct {
   int shear_Nbin; // number of tomography bins
   int shear_Npowerspectra;// number of tomography power spectra+2+3+...+Nbin
-  double shear_zmax[10]; // code needs modification if more than 10 zbins
-  double shear_zmin[10];
-  double n_source[10];
+  double shear_zmax[20]; // code needs modification if more than 10 zbins
+  double shear_zmin[20];
+  double n_source[20];
   int clustering_Nbin; // number of tomography bins
   int clustering_Npowerspectra;// number of tomography power spectra+2+3+...+Nbin
-  double clustering_zmax[10];
-  double clustering_zmin[10];
-  double n_lens[10];
+  double clustering_zmax[20];
+  double clustering_zmin[20];
+  // double n_lens[20];
+  double n_lens_ij[20][20];
   int ggl_Npowerspectra;// number of ggl tomography combinations
 }tomopara;
-tomopara tomo = {.n_source = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},.n_lens = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.}};
-
+tomopara tomo = {.n_source = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.}};
 
 typedef struct {
   int shear_photoz;
@@ -113,13 +113,16 @@ double b1_per_bin(double z, int nz);
 
 typedef  double (*B1_model)(double z, int nz);
 typedef struct{
-  double b[10]; /* linear galaxy bias paramter in clustering bin i*/
-  double b2[10]; /* quadratic bias parameter for redshift bin i */
-  double bs2[10]; /* leading order tidal bias for redshift bin i */
-  double b_mag[10]; /*amplitude of magnification bias, b_mag[i] = 5*s[i]+beta[i] -2 */
+  double b[20]; /* linear galaxy bias paramter in clustering bin i*/
+  double b2[20]; /* quadratic bias parameter for redshift bin i */
+  double bs2[20]; /* leading order tidal bias for redshift bin i */
+  double b_mag[20]; /*amplitude of magnification bias, b_mag[i] = 5*s[i]+beta[i] -2 */
   B1_model b1_function;
 }galpara;
-galpara gbias ={.b2 ={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0},.bs2 ={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0},.b1_function = &b1_per_bin, .b_mag ={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}}; //default: point to old bgal_z routin
+galpara gbias ={.b2 ={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0},
+                .bs2 ={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0},
+                .b1_function = &b1_per_bin, 
+                .b_mag ={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}}; //default: point to old bgal_z routin
 double b1_per_bin(double z, int ni){
   return gbias.b[ni];
 }
@@ -137,22 +140,22 @@ typedef struct {
   double eta_ia; //eta_other IA see Joachimi2012
   double oneplusz0_ia; //oneplusz0-ia MegaZ
   double c1rhocrit_ia;
-  double fred[10];
-  double shear_calibration_m[10];
-  double sigma_zphot_shear[10];
-  double bias_zphot_shear[10];
-  double sigma_zphot_clustering[10];
-  double bias_zphot_clustering[10];
-  double sigma_zphot_magnification[10];
-  double bias_zphot_magnification[10];
+  double fred[20];
+  double shear_calibration_m[20];
+  double sigma_zphot_shear[20];
+  double bias_zphot_shear[20];
+  double sigma_zphot_clustering[20];
+  double bias_zphot_clustering[20];
+  double sigma_zphot_magnification[20];
+  double bias_zphot_magnification[20];
 }
 nuisancepara;
 nuisancepara nuisance ={.c1rhocrit_ia = 0.013873073650776856,
-  .shear_calibration_m = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
-  .sigma_zphot_shear = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
-  .bias_zphot_shear = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
-  .sigma_zphot_clustering = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
-  .bias_zphot_clustering = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.}};
+  .shear_calibration_m = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
+  .sigma_zphot_shear = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
+  .bias_zphot_shear = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
+  .sigma_zphot_clustering = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.},
+  .bias_zphot_clustering = {0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.}};
 
 typedef struct {
     double tmin; /* Theta min (arcmin) */
