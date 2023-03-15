@@ -50,6 +50,12 @@ by CosmoLike developers
 
 #include "../cosmolike_core/cfftlog/utils_complex.h"
 
+// used in checking existence of output directory
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+//
+
 int main(int argc, char** argv)
 {
 
@@ -108,6 +114,13 @@ int main(int argc, char** argv)
   set_angular_binning(thetamin,dtheta);
 
   printf("numbers of powers: %d, %d, %d \n",tomo.shear_Npowerspectra, tomo.clustering_Npowerspectra,tomo.ggl_Npowerspectra);
+
+  // if outdir doesn't exist, create one
+  struct stat st = {0};
+  if (stat(covparams.outdir, &st) == -1) {
+      mkdir(covparams.outdir, 0700);
+  }
+
   int k=1;
   if (strcmp(covparams.ss,"true")==0)
   {

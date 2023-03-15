@@ -50,6 +50,12 @@ by CosmoLike developers
 
 #include "../cosmolike_core/2dfftlog/utils_complex.h"
 
+// used in checking existence of output directory
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+//
+
 #include <time.h>
 
 int main(int argc, char** argv)
@@ -117,6 +123,11 @@ int main(int argc, char** argv)
     theta[i] = 2./3.*(pow(thetamin[i+1],3.)-pow(thetamin[i],3.))/(pow(thetamin[i+1],2.)-pow(thetamin[i],2.));
   }
 
+  // if outdir doesn't exist, create one
+  struct stat st = {0};
+  if (stat(covparams.outdir, &st) == -1) {
+      mkdir(covparams.outdir, 0700);
+  }
 
   int k=1;
   if (strcmp(covparams.ss,"true")==0)
