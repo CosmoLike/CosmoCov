@@ -258,6 +258,45 @@ double u_nfw_c(double c,double k, double m, double aa){// analytic FT of NFW pro
   return (sin(x)*(gsl_sf_Si(xu)-gsl_sf_Si(x))- sinl(c*x)/xu +cos(x)*(gsl_sf_Ci(xu)-gsl_sf_Ci(x)))*1./(log(1.+c)-c/(1.+c));
 }
 
+double u_nfw_c_interp(double c,double k, double m, double a){
+  // static cosmopara C;
+
+  static int N_c = 25, N_x = 80;
+  static double cmin = 0.1, cmax = 50.;
+  static double xmin = 1e-10, xmax = 5e4; // full range of possible k*R_200/c in the code
+  static double logxmin = 0., logxmax=0., dx=0., dc=0.;
+  
+  static double **table=0;
+  
+  double cc,xlog, xx, xu;
+  double x;
+  int i,j;
+
+  x = k * r_Delta(m,a)/c;
+
+  // if (recompute_cosmo3D(C)){ //extend this by halo model parameters if these become part of the model
+  //   update_cosmopara(&C);
+  if (table==0) {
+    table = create_double_matrix(0, N_c-1, 0, N_x-1);
+    logxmin = log(xmin); logxmax = log(xmax);
+    dx = (logxmax - logxmin)/(N_x-1.); dc = (cmax - cmin)/(N_c-1.);
+
+    cc = cmin;
+    for (i=0; i<N_c; i++, cc +=dc) {
+      xlog  = logxmin;
+      for (j=0; j<N_x; j++, xlog += dx) {
+        xx = exp(xlog);
+        xu = (1.+cc)*xx;
+        table[i][j] = (sin(xx)*(gsl_sf_Si(xu)-gsl_sf_Si(xx))- sinl(cc*xx)/xu +cos(xx)*(gsl_sf_Ci(xu)-gsl_sf_Ci(xx)))*1./(log(1.+cc)-cc/(1.+cc)); 
+      }
+    }
+  }
+  if (c < cmin || c >cmax){return 0.;}
+  if (log(x) < logxmin || log(x) > logxmax){return 0.;}
+  // printf("c, x = %le, %le\n",c,x);
+  return interpol2d(table, N_c, cmin, cmax, dc, c, N_x, logxmin, logxmax, dx, log(x), 0.0, 0.0);
+}
+
 
 double inner_I0j (double logm, void *para){
   double *array = (double *) para;
@@ -268,14 +307,20 @@ double inner_I0j (double logm, void *para){
   int l;
   int j = (int)(array[5]);
   for (l = 0; l< j; l++){
-    u = u*u_nfw_c(c,array[l],m,a);
+    u = u*u_nfw_c_interp(c,array[l],m,a);
   }
   return massfunc(m,a)*m*pow(m/(cosmology.rho_crit*cosmology.Omega_m),(double)j)*u;
 }
 
 double I0j (int j, double k1, double k2, double k3, double k4,double a){
   double array[7] = {k1,k2,k3,k4,0.,(double)j,a};
-  return int_gsl_integrate_medium_precision(inner_I0j,(void*)array,log(limits.M_min),log(limits.M_max),NULL, 2000);
+  double result=0., logm;
+  double logMmin=log(limits.M_min), logMmax=log(limits.M_max);
+  double dlogm = (logMmax-logMmin)/200.;
+  for(logm=logMmin;logm<=logMmax;logm+=dlogm){
+    result += inner_I0j(logm, (void*)array);
+  }
+  return result*dlogm;
 }
 
 double inner_I1j (double logm, void *para){
@@ -287,50 +332,75 @@ double inner_I1j (double logm, void *para){
   int l;
   int j = (int)(array[5]);
   for (l = 0; l< j; l++){
-    u = u*u_nfw_c(c,array[l],m,a);
+    u = u*u_nfw_c_interp(c,array[l],m,a);
   }
   return massfunc(m,a)*m*pow(m/(cosmology.rho_crit*cosmology.Omega_m),(double)j)*u*B1_normalized(m,a);
 }
 
-double I_11 (double k,double a){//look-up table for I11 integral
-  static cosmopara C;
-  static double amin = 0, amax = 0,logkmin = 0., logkmax = 0., dk = 0., da = 0.;
+// double I_11 (double k,double a){//look-up table for I11 integral
+//   static cosmopara C;
+//   static double amin = 0, amax = 0,logkmin = 0., logkmax = 0., dk = 0., da = 0.;
 
-  static double **table_I1=0;
+//   static double **table_I1=0;
 
-  double aa,klog;
-  int i,j;
+//   double aa,klog;
+//   int i,j;
 
-  if (recompute_cosmo3D(C)){ //extend this by halo model parameters if these become part of the model
-    update_cosmopara(&C);
-    if (table_I1==0) table_I1 = create_double_matrix(0, Ntable.N_a-1, 0, Ntable.N_k_nlin-1);
-    double array[7];
-    array[5]=1.0;
+//   if (recompute_cosmo3D(C)){ //extend this by halo model parameters if these become part of the model
+//     update_cosmopara(&C);
+//     if (table_I1==0) table_I1 = create_double_matrix(0, Ntable.N_a-1, 0, Ntable.N_k_nlin-1);
+//     double array[7];
+//     array[5]=1.0;
 
-    amin = limits.a_min;
-    amax = 1.;
-    da = (amax - amin)/(Ntable.N_a);
-    aa = amin;
-    logkmin = log(limits.k_min_cH0);
-    logkmax = log(limits.k_max_cH0);
-    dk = (logkmax - logkmin)/(Ntable.N_k_nlin);
-    for (i=0; i<Ntable.N_a; i++, aa +=da) {
-      array[6] = fmin(aa,0.999);
-      klog  = logkmin;
-      for (j=0; j<Ntable.N_k_nlin; j++, klog += dk) {
-        array[0]= exp(klog);
-        table_I1[i][j] = log(int_gsl_integrate_medium_precision(inner_I1j,(void*)array,log(limits.M_min),log(limits.M_max),NULL, 2000));
-      }
-    }
+//     amin = limits.a_min;
+//     amax = 1.;
+//     da = (amax - amin)/(Ntable.N_a);
+//     aa = amin;
+//     logkmin = log(limits.k_min_cH0);
+//     logkmax = log(limits.k_max_cH0);
+//     dk = (logkmax - logkmin)/(Ntable.N_k_nlin);
+//     for (i=0; i<Ntable.N_a; i++, aa +=da) {
+//       array[6] = fmin(aa,0.999);
+//       klog  = logkmin;
+//       for (j=0; j<Ntable.N_k_nlin; j++, klog += dk) {
+//         array[0]= exp(klog);
+//         table_I1[i][j] = log(int_gsl_integrate_medium_precision(inner_I1j,(void*)array,log(limits.M_min),log(limits.M_max),NULL, 2000));
+//       }
+//     }
+//   }
+//   aa = fmin(a,amax-1.1*da);//to avoid interpolation errors near z=0
+//   return exp(interpol2d(table_I1, Ntable.N_a, amin, amax, da, aa, Ntable.N_k_nlin, logkmin, logkmax, dk, log(k), 1.0, 1.0));
+// }
+
+double I_11 (double k,double a){
+  double array[7];
+  array[0]=k;
+  array[5]=1.0;
+  array[6]=a;
+  double result=0., logm;
+  double logMmin=log(limits.M_min), logMmax=log(limits.M_max);
+  double dlogm = (logMmax-logMmin)/200.;
+  for(logm=logMmin;logm<=logMmax;logm+=dlogm){
+    result += inner_I1j(logm, (void*)array);
   }
-  aa = fmin(a,amax-1.1*da);//to avoid interpolation errors near z=0
-  return exp(interpol2d(table_I1, Ntable.N_a, amin, amax, da, aa, Ntable.N_k_nlin, logkmin, logkmax, dk, log(k), 1.0, 1.0));
+  return result*dlogm;
 }
 
+// double I1j (int j, double k1, double k2, double k3,double a){
+//   if (j ==1) {return I_11(k1,a);}
+//   double array[7] = {k1,k2,k3,0.,0.,(double)j,a};
+//   return int_gsl_integrate_medium_precision(inner_I1j,(void*)array,log(limits.M_min),log(limits.M_max),NULL, 2000);
+// }
 double I1j (int j, double k1, double k2, double k3,double a){
   if (j ==1) {return I_11(k1,a);}
   double array[7] = {k1,k2,k3,0.,0.,(double)j,a};
-  return int_gsl_integrate_medium_precision(inner_I1j,(void*)array,log(limits.M_min),log(limits.M_max),NULL, 2000);
+  double result=0., logm;
+  double logMmin=log(limits.M_min), logMmax=log(limits.M_max);
+  double dlogm = (logMmax-logMmin)/200.;
+  for(logm=logMmin;logm<=logMmax;logm+=dlogm){
+    result += inner_I1j(logm, (void*)array);
+  }
+  return result*dlogm;
 }
 
 /*++++++++++++++++++++++++++++++++++++++++*
@@ -356,32 +426,39 @@ double Pdelta_halo(double k,double a)
   static cosmopara C;
   static double logkmin = 0., logkmax = 0., dk = 0., da = 0.;
 
-  static double **table_P_NL=0;
+  static int N_a = 20, N_k_nlin = 100;
 
+  static double **table_P_NL=0;
+  
   double klog,val,aa,kk;
   int i,j;
-
+  // clock_t t1, t2; double dt;
   if (recompute_cosmo3D(C)){ //extend this by halo model parameters if these become part of the model
     update_cosmopara(&C);
-    if (table_P_NL!=0) free_double_matrix(table_P_NL,0, Ntable.N_a-1, 0, Ntable.N_k_nlin-1);
-    table_P_NL = create_double_matrix(0, Ntable.N_a-1, 0, Ntable.N_k_nlin-1);
-
-    da = (1. - limits.a_min)/(Ntable.N_a*1.0);
+    if (table_P_NL!=0) free_double_matrix(table_P_NL,0, N_a-1, 0, N_k_nlin-1);
+    table_P_NL = create_double_matrix(0, N_a-1, 0, N_k_nlin-1);
+    
+    da = (0.999 - limits.a_min_hm)/(N_a*1.0-1);
     logkmin = log(limits.k_min_cH0);
     logkmax = log(limits.k_max_cH0);
-    dk = (logkmax - logkmin)/(Ntable.N_k_nlin*1.0);
-    aa= limits.a_min;
-    for (i=0; i<Ntable.N_a; i++, aa +=da) {
+    dk = (logkmax - logkmin)/(N_k_nlin*1.0-1);
+    aa= limits.a_min_hm;
+    for (i=0; i<N_a; i++, aa +=da) {
       if(aa>0.999) aa=.999;
       klog  = logkmin;
-      for (j=0; j<Ntable.N_k_nlin; j++, klog += dk) {
+      // t1=clock();
+      for (j=0; j<N_k_nlin; j++, klog += dk) {
         kk = exp(klog);
         table_P_NL[i][j] = log(p_1h(kk,aa) + p_2h(kk,aa));
+        if(isinf(table_P_NL[i][j])) table_P_NL[i][j] = -300.;
       }
     }
   }
   klog = log(k);
-  val = interpol2d(table_P_NL, Ntable.N_a, limits.a_min, 1., da, a, Ntable.N_k_nlin, logkmin, logkmax, dk, klog, 0.0, 0.0);
+  if (klog < logkmin || klog >logkmax){return 0.;}
+  if (a < limits.a_min_hm){return Pdelta_halo(k,limits.a_min_hm)*pow(growfac(a)/growfac(limits.a_min_hm),2);}
+  if (a > 0.999){return Pdelta_halo(k,0.999)*pow(growfac(a)/growfac(0.999),2);}
+  val = interpol2d(table_P_NL, N_a, limits.a_min_hm, 0.999, da, a, N_k_nlin, logkmin, logkmax, dk, klog, 0.0, 0.0);
   return exp(val);
 }
 
@@ -389,36 +466,36 @@ double Pdelta_halo(double k,double a)
 double I12_SSC (double k,double a){//one-halo term contribution to super sample covariance
   static cosmopara C;
   static double amin = 0, amax = 0,logkmin = 0., logkmax = 0., dk = 0., da = 0.;
-
+  
   static double **table_I1=0;
-
+  
   double aa,klog;
   int i,j;
 
   if (recompute_cosmo3D(C)){ //extend this by halo model parameters if these become part of the model
     update_cosmopara(&C);
     if (table_I1==0) table_I1 = create_double_matrix(0, Ntable.N_a-1, 0, Ntable.N_k_nlin-1);
-    double array[7];
-    array[5]=2.0;
-
+    
     amin = limits.a_min;
-    amax = 1.-1.e-5;
-    da = (amax - amin)/(Ntable.N_a);
+    // amax = 1.-1.e-5;
+    amax = 0.999;
+    da = (amax - amin)/(Ntable.N_a-1.);
     aa = amin;
     logkmin = log(limits.k_min_cH0);
     logkmax = log(limits.k_max_cH0);
-    dk = (logkmax - logkmin)/(Ntable.N_k_nlin);
+    dk = (logkmax - logkmin)/(Ntable.N_k_nlin-1.);
     for (i=0; i<Ntable.N_a; i++, aa +=da) {
-      array[6] = fmin(aa,0.999);
+      // array[6] = fmin(aa,0.999);
       klog  = logkmin;
       for (j=0; j<Ntable.N_k_nlin; j++, klog += dk) {
-        array[0]= exp(klog);array[1]= exp(klog);
-        table_I1[i][j] = log(int_gsl_integrate_medium_precision(inner_I1j,(void*)array,log(limits.M_min),log(limits.M_max),NULL, 2000));
+        table_I1[i][j] = log(I1j(2,exp(klog),exp(klog),0.,aa));
       }
     }
   }
-  if (log(k) <logkmin){return 1.0;};
+  if (log(k) <logkmin){return I12_SSC(exp(logkmin),a);};
   if (log(k) >logkmax){return 0.0;};
-  aa = fmin(a,amax-1.1*da);
-  return exp(interpol2d(table_I1, Ntable.N_a, amin, amax, da, aa, Ntable.N_k_nlin, logkmin, logkmax, dk, log(k), 1.0, 1.0));
+  aa = fmin(a,0.999);
+  double res = exp(interpol2d(table_I1, Ntable.N_a, amin, amax, da, aa, Ntable.N_k_nlin, logkmin, logkmax, dk, log(k), 1.0, 1.0));
+  if(isnan(res)) {res=0.;}
+  return res;
 }
