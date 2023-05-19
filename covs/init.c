@@ -55,6 +55,8 @@ void init_source_sample(char *multihisto_file, int Ntomo)
   if(like.IA==0){printf("No IA \n");}
   else if(like.IA==1){
     printf("like.IA: %d, using parameters A_ia, eta_ia\n",like.IA);
+    printf("constant oneplusz0_ia is set: %lf\n", nuisance.oneplusz0_ia);
+    if (nuisance.oneplusz0_ia < 1.0) {error("oneplusz0_ia is not set correctly!");}
     printf("A_ia = %lf, eta_ia = %lf \n", nuisance.A_ia, nuisance.eta_ia);
   }
   printf("init_source_sample complete\n");
