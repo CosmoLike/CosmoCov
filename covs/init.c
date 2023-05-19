@@ -749,6 +749,15 @@ void set_survey_parameters(char *surveyfile, int output)
       }
       continue;
     }
+    else if(strcmp(name, "oneplusz0_ia")==0 && like.IA==1)
+    {
+      sscanf(val, "%lf", &nuisance.oneplusz0_ia);
+      if(output==1)
+      {
+        printf("oneplusz0_ia = %lf \n",nuisance.oneplusz0_ia);
+      }
+      continue;
+    }
   }
   survey.area_conversion_factor = 60.0*60.0*constants.arcmin*constants.arcmin;
   survey.n_gal_conversion_factor=1.0/constants.arcmin/constants.arcmin;
