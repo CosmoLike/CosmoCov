@@ -83,6 +83,8 @@ The ini files contain all the settings, including
 
   - `A_ia`, `eta_ia`: the parameters of the NLA model (see Eq. 4.9 of [Fang et al. (arXiv:1911.11947)](https://arxiv.org/abs/1911.11947), but with `A_ia` represented by `a_IA` in the equation),
 
+  - `oneplusz0_ia`: `1+z_0` where `z_0` is the pivot redshift for IA, usually set as the mean redshift of the source sample,
+
   - `tmin, tmax, ntheta`: min and max of the angles in arcmins, and the number of
     logarithmically spaced bins, specifying the binning of the angular correlation functions,
 
