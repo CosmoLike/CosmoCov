@@ -37,7 +37,7 @@ by CosmoLike developers
 #include "../cosmolike_core/theory/basics.c"
 #include "../cosmolike_core/theory/structs.c"
 #include "../cosmolike_core/theory/recompute.c"
-#include "../cosmolike_core/theory/cosmo3D.c"
+#include "../cosmolike_core/theory/cosmo3D_CLASS.c"
 #include "../cosmolike_core/theory/redshift_spline.c"
 #include "../cosmolike_core/theory/halo.c"
 #include "../cosmolike_core/theory/cosmo2D_fourier.c"

@@ -57,8 +57,9 @@ typedef struct {
      double MGSigma;
      double MGmu;
      double theta_s;
+      double log10Tagn;
 }cosmopara;
-cosmopara cosmology = {.A_s = 0., .sigma_8=0., .alpha_s =0.0, .M_nu =0., .Omega_nu =0.,.coverH0= 2997.92458, .rho_crit = 7.4775e+21,.MGSigma=0.0,.MGmu=0.0,.theta_s =0.0};
+cosmopara cosmology = {.A_s = 0., .sigma_8=0., .alpha_s =0.0, .M_nu =0., .Omega_nu =0.,.coverH0= 2997.92458, .rho_crit = 7.4775e+21,.MGSigma=0.0,.MGmu=0.0,.theta_s =0.0,.log10Tagn=0.};
 
 typedef struct {
   int shear_Nbin; // number of tomography bins
