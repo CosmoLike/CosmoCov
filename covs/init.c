@@ -314,6 +314,7 @@ void set_cosmological_parameters(char *cosmofile, int output)
 {
   char line[256];
   int iline=0;
+  double omega_nuh2;
 
   FILE* input = fopen(cosmofile, "r");
   while(fgets(line, 256, input) != NULL)
@@ -396,6 +397,12 @@ void set_cosmological_parameters(char *cosmofile, int output)
       }
       continue;
     }
+    else if(strcmp(name, "omega_nuh2")==0)
+    {
+      //save omega_nuh2 into temporary variable, convert to cosmology.M_nu at the end of this routine (when h0 is certainly set)
+      sscanf(val, "%lf", &omega_nuh2);
+      continue;
+    }
     else if(strcmp(name, "coverH0")==0)
     {
       sscanf(val, "%lf", &cosmology.coverH0);
@@ -432,16 +439,34 @@ void set_cosmological_parameters(char *cosmofile, int output)
       }
       continue;
     }
+    else if(strcmp(name, "log10Tagn")==0)
+    {
+      sscanf(val, "%lf", &cosmology.log10Tagn);
+      //log10Tagn only supported if pdeltaparams.runmode==classtagn
+      assert(strcmp(pdeltaparams.runmode,"classtagn")==0); 
+      if(output==1)
+      {
+        printf("log10TagnL %f \n",cosmology.log10Tagn);
+      }
+      continue;
+    }
+
     else if(strcmp(name, "A_s")==0)
     {
       sscanf(val, "%lf", &cosmology.A_s);
       if(output==1)
       {
-        printf("f_NL %f \n",cosmology.A_s);
+        printf("A_s %f \n",cosmology.A_s);
       }
       continue;
     }
   }
+  cosmology.Omega_nu = omega_nuh2/cosmology.h0/cosmology.h0;
+  if(output==1)
+  {
+    printf("Omega_nuh %f \n",cosmology.Omega_nu);
+  }
+
 }
 
 
