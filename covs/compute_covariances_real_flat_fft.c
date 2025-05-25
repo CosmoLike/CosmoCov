@@ -46,6 +46,7 @@ by CosmoLike developers
 #include "../cosmolike_core/theory/covariances_fourier.c"
 #include "../cosmolike_core/theory/covariances_real_bin_fft.c"
 #include "../cosmolike_core/theory/run_covariances_real_bin_fft.c"
+#include "../cosmolike_core/theory/cosmo2D_fullsky.c"
 #include "init.c"
 
 #include "../cosmolike_core/2dfftlog/utils_complex.h"
@@ -85,8 +86,8 @@ int main(int argc, char** argv)
 
   init_source_sample(redshift.shear_REDSHIFT_FILE,tomo.shear_Nbin);
   init_lens_sample(redshift.clustering_REDSHIFT_FILE,tomo.clustering_Nbin);
-
-  if (covparams.lin_bins){
+  
+   if (covparams.lin_bins){
     printf("covariances_real_flat_fft does not support linear angular binning\nEXIT\n");exit(1);
   }
   if (covparams.full_tomo){
@@ -259,6 +260,11 @@ int main(int argc, char** argv)
     F1 = fopen(OUTFILE,"w");
     fprintf(F1,"%d\n",k-1);
     fclose(F1);
+
+    //for diagnostics only: evaluate 3x2pt model data vector for covariance parameters
+    sprintf(OUTFILE,"%s%s.3x2pt_model_vector",covparams.outdir,covparams.filename);
+    print_modelvector(OUTFILE);
+ 
   }
 
   printf("number of cov blocks for parallelization: %d\n",k-1);

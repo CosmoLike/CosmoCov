@@ -46,6 +46,7 @@ by CosmoLike developers
 #include "../cosmolike_core/theory/covariances_fourier.c"
 #include "../cosmolike_core/theory/covariances_real_binned_fullsky_nonlimber_w.c"
 #include "../cosmolike_core/theory/run_covariances_real_fullsky.c"
+#include "../cosmolike_core/theory/cosmo2D_fullsky.c"
 #include "init.c"
 
 #include "../cosmolike_core/cfftlog/utils_complex.h"
@@ -259,6 +260,10 @@ int main(int argc, char** argv)
     F1 = fopen(OUTFILE,"w");
     fprintf(F1,"%d\n",k-1);
     fclose(F1);
+    //for diagnostics only: evaluate 3x2pt model data vector for covariance parameters
+    sprintf(OUTFILE,"%s%s.3x2pt_model_vector",covparams.outdir,covparams.filename);
+    print_modelvector(OUTFILE);
+
   }
 
   printf("number of cov blocks for parallelization: %d\n",k-1);
