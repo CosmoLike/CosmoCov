@@ -14,6 +14,65 @@ void init_source_sample(char *multihisto_file, int Ntomo);
 void init_ggl_tomo();
 void init_lens_sample(char *multihisto_file, int Ntomo);
 void set_angular_binning(double *thetamin, double *dtheta);
+void print_modelvector(char *outputfile);
+
+
+void print_modelvector(char *outputfile){
+  printf("writing model 3x2pt vector to %s\n",outputfile);
+  FILE *F;
+  F=fopen(outputfile,"w");
+  int i,nz,z1,z2,zl,zs,j;
+  j = 0;
+  // cosmic shear - xi+
+  for (nz = 0; nz < tomo.shear_Npowerspectra; nz++){
+    z1 = Z1(nz); z2 = Z2(nz);
+    for (i = 0; i < like.Ntheta; i++){
+//      printf("%d %e\n",j,xi_pm_fullsky(1,i,z1,z2));
+      fprintf(F,"%d %e\n",j,xi_pm_fullsky(1,i,z1,z2));
+      j++;
+    }
+  }
+  // cosmic shear - xi-
+  for (nz = 0; nz < tomo.shear_Npowerspectra; nz++){
+    z1 = Z1(nz); z2 = Z2(nz);
+    for (i = 0; i < like.Ntheta; i++){
+//      printf("%d %e\n",j,xi_pm_fullsky(-1,i,z1,z2));
+      fprintf(F,"%d %e\n",j,xi_pm_fullsky(-1,i,z1,z2));
+      j++;
+    }
+  }
+  //ggl
+  for (zl = 0; zl < tomo.clustering_Nbin; zl++){
+    for ( zs = 0; zs < tomo.shear_Nbin; zs++){
+      for (i = 0; i < like.Ntheta; i++){
+     //   printf("%d %e\n",j,w_gamma_t_fullsky(i,zl,zs));
+        fprintf(F,"%d %e\n",j,w_gamma_t_fullsky(i,zl,zs));
+        j++;
+      }
+    }
+  }
+  //angular clustering
+  for (nz = 0; nz < tomo.clustering_Nbin; nz++){
+    for (i = 0; i < like.Ntheta; i++){
+    //  printf("%d %e\n",j,w_tomo_fullsky(i, nz, nz));
+      fprintf(F,"%d %e\n",j,w_tomo_fullsky(i, nz, nz));
+      j++;
+    }
+    if (covparams.full_tomo == 1){
+      //C(\ell) -> w(\theta) transform is only implemented for auto-tomography bins
+      //output zeros for cross-bin clustering to match data vector length
+      for (z2 = nz+1; z2< tomo.clustering_Nbin; z2++){
+        for (i = 0; i < like.Ntheta; i++){
+            fprintf(F,"%d %e\n",j,0.);
+            j++;
+        }
+      }
+    }//end full_tomo
+  }//nz loop
+  fclose(F);
+}
+
+
 
 void set_angular_binning(double *thetamin, double *dtheta){
   double *thetamax;
@@ -154,6 +213,7 @@ void set_cov_parameters(char *covparamfile, int output)
     {
       sscanf(val, "%lf", &covparams.tmin);
       covparams.tmin*=constants.arcmin;
+      like.vtmin = covparams.tmin;
       if(output==1)
       {
         printf("tmin %f \n",covparams.tmin);
@@ -164,6 +224,7 @@ void set_cov_parameters(char *covparamfile, int output)
     {
       sscanf(val, "%lf", &covparams.tmax);
       covparams.tmax*=constants.arcmin;
+      like.vtmax = covparams.tmax;
       if(output==1)
       {
         printf("tmax %f \n",covparams.tmax);
@@ -173,6 +234,7 @@ void set_cov_parameters(char *covparamfile, int output)
     else if(strcmp(name, "ntheta")==0)
     {
       sscanf(val, "%d", &covparams.ntheta);
+      like.Ntheta = covparams.ntheta;
       if(output==1)
       {
         printf("ntheta %d \n",covparams.ntheta);

@@ -37,6 +37,14 @@ double func_for_cov_G_cl_shear(double l, int *ar);
 double func_for_cov_G_cl_gl(double l, int *ar);
 double func_for_cov_G_gl_shear(double l, int *ar);
 
+//used only for computing 2pt model vector 
+double Cl_cl_cov(double l, int z1, int z2); //redirect to C_cl_tomo_nonlimber_interp(l,n1,n3) for non-Limber, C_cl_tomo for Limber
+
+
+
+double Cl_cl_cov(double l, int z1, int z2){
+  return C_cl_tomo_nonlimber_interp(l,z1,z2);
+}
 /////// full sky covs
 
 void cov_shear_shear_real_binned_fullsky(double **cov, double **covNG, int z1,int z2,int z3,int z4,int pm1,int pm2, int FLAG_NG, double *theta, double *dtheta){

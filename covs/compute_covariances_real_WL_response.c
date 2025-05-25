@@ -48,6 +48,7 @@ by CosmoLike developers
 #include "init.c"
 #include "../cosmolike_core/theory/cov_response_WL.c"
 #include "../cosmolike_core/theory/run_covariances_real_fullsky_WL_response.c"
+#include "../cosmolike_core/theory/cosmo2D_fullsky.c"
 
 // used in checking existence of output directory
 #include <sys/types.h>
