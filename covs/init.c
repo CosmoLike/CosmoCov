@@ -15,7 +15,7 @@ void init_ggl_tomo();
 void init_lens_sample(char *multihisto_file, int Ntomo);
 void set_angular_binning(double *thetamin, double *dtheta);
 void print_modelvector(char *outputfile);
-
+void print_parameter_check(char *outputfile, char *inifile);
 
 void print_modelvector(char *outputfile){
   printf("writing model 3x2pt vector to %s\n",outputfile);
@@ -69,6 +69,65 @@ void print_modelvector(char *outputfile){
       }
     }//end full_tomo
   }//nz loop
+  fclose(F);
+}
+
+void print_parameter_check(char *outputfile, char *inifile){
+  printf("writing parameter values to %s\n",outputfile);
+  FILE *F;
+  F=fopen(outputfile,"w");
+  fprintf(F,"Config file: %s\n",inifile);
+  fprintf(F,"cosmology.Omega_m = %g\n",cosmology.Omega_m);
+  fprintf(F,"cosmology.Omega_v = %g\n",cosmology.Omega_v);
+  fprintf(F,"cosmology.sigma_8 = %g\n",cosmology.sigma_8);
+  fprintf(F,"cosmology.w0 = %g\n",cosmology.w0);
+  fprintf(F,"cosmology.wa = %g\n",cosmology.wa);
+  fprintf(F,"cosmology.n_spec = %g\n",cosmology.n_spec);
+  fprintf(F,"cosmology.omb   = %g\n",cosmology.omb);
+  fprintf(F,"cosmology.h0 = %g\n",cosmology.h0);
+  fprintf(F,"like.IA = %d\n",like.IA);
+  fprintf(F,"nuisance.A_ia = %g\n",nuisance.A_ia);
+  fprintf(F,"nuisance.eta_ia = %g\n",nuisance.eta_ia);
+  fprintf(F,"nuisance.oneplusz0_ia = %g\n",nuisance.oneplusz0_ia);
+
+
+  fprintf(F,"\ntomo.clustering_Nbin = %g\n",tomo.clustering_Nbin);
+  fprintf(F,"redshift.clustering_REDSHIFT_FILE = %s\n",redshift.clustering_REDSHIFT_FILE);
+  int i;
+  for (i=0; i < tomo.clustering_Nbin; i++){
+    fprintf(F,"gbias.b[%d] = %g\n",i,gbias.b[i]);
+  }
+  for (i=0; i < tomo.clustering_Nbin; i++){
+    fprintf(F,"gbias.b_mag[%d] = %g\n",i,gbias.b_mag[i]);
+  }
+  for (i=0; i < tomo.clustering_Nbin; i++){
+    fprintf(F,"tomo.n_lens_ij[%d][%d] = %g\n",i,i,tomo.n_lens_ij[i]);
+  }
+
+
+  fprintf(F,"\ntomo.shear_Nbin = %g\n",tomo.shear_Nbin);
+  fprintf(F,"redshift.shear_REDSHIFT_FILE = %s\n",redshift.shear_REDSHIFT_FILE);
+  for (i=0; i < tomo.shear_Nbin; i++){
+    fprintf(F,"gbias.b_mag[%d] = %g\n",i,gbias.b_mag[i]);
+  }
+  for (i=0; i < tomo.shear_Nbin; i++){
+    fprintf(F,"tomo.n_source[%d] = %g\n",i,tomo.n_source[i]);
+  }
+
+
+  fprintf(F,"\npdeltaparams.runmode = %s\n",pdeltaparams.runmode);
+  fprintf(F,"cosmology.coverH0 = %g\n",cosmology.coverH0);
+  fprintf(F,"cosmology.A_s = %g\n",cosmology.A_s);
+  fprintf(F,"cosmology.f_NL = %g\n",cosmology.f_NL);
+  fprintf(F,"cosmology.rho_crit = %g\n",cosmology.rho_crit);
+
+  fprintf(F,"\ncovparams.tmin = %g\n",covparams.tmin);
+  fprintf(F,"covparams.tmax = %g\n",covparams.tmax);
+  fprintf(F,"covparams.ntheta = %g\n",covparams.ntheta);
+  fprintf(F,"covparams.C_FOOTPRINT_FILE = %g\n",covparams.C_FOOTPRINT_FILE);
+  fprintf(F,"survey.area = %g\n",survey.area);
+  fprintf(F,"survey.sigma_e = %g\n",survey.sigma_e);
+
   fclose(F);
 }
 
@@ -376,7 +435,6 @@ void set_cosmological_parameters(char *cosmofile, int output)
 {
   char line[256];
   int iline=0;
-  double omega_nuh2;
 
   FILE* input = fopen(cosmofile, "r");
   while(fgets(line, 256, input) != NULL)
@@ -459,12 +517,6 @@ void set_cosmological_parameters(char *cosmofile, int output)
       }
       continue;
     }
-    else if(strcmp(name, "omega_nuh2")==0)
-    {
-      //save omega_nuh2 into temporary variable, convert to cosmology.M_nu at the end of this routine (when h0 is certainly set)
-      sscanf(val, "%lf", &omega_nuh2);
-      continue;
-    }
     else if(strcmp(name, "coverH0")==0)
     {
       sscanf(val, "%lf", &cosmology.coverH0);
@@ -501,34 +553,16 @@ void set_cosmological_parameters(char *cosmofile, int output)
       }
       continue;
     }
-    else if(strcmp(name, "log10Tagn")==0)
-    {
-      sscanf(val, "%lf", &cosmology.log10Tagn);
-      //log10Tagn only supported if pdeltaparams.runmode==classtagn
-      assert(strcmp(pdeltaparams.runmode,"classtagn")==0); 
-      if(output==1)
-      {
-        printf("log10TagnL %f \n",cosmology.log10Tagn);
-      }
-      continue;
-    }
-
     else if(strcmp(name, "A_s")==0)
     {
       sscanf(val, "%lf", &cosmology.A_s);
       if(output==1)
       {
-        printf("A_s %f \n",cosmology.A_s);
+        printf("f_NL %f \n",cosmology.A_s);
       }
       continue;
     }
   }
-  cosmology.Omega_nu = omega_nuh2/cosmology.h0/cosmology.h0;
-  if(output==1)
-  {
-    printf("Omega_nuh %f \n",cosmology.Omega_nu);
-  }
-
 }
 
 
@@ -595,8 +629,7 @@ void set_survey_parameters(char *surveyfile, int output)
     }
     else if(strcmp(name, "clustering_REDSHIFT_FILE")==0)
     {
-      sprintf(redshift.clustering_REDSHIFT_FILE,"%s",val);
-      if(output==1)
+      sprintf(redshift.clustering_REDSHIFT_FILE,"%s",val);      if(output==1)
       {
         printf("clustering_REDSHIFT_FILE %s \n",redshift.clustering_REDSHIFT_FILE);
       }

@@ -36,7 +36,7 @@ by CosmoLike developers
 #include "../cosmolike_core/theory/structs.c"
 #include "../cosmolike_core/theory/basics.c"
 #include "../cosmolike_core/theory/recompute.c"
-#include "../cosmolike_core/theory/cosmo3D_CLASS.c"
+#include "../cosmolike_core/theory/cosmo3D.c"
 #include "../cosmolike_core/theory/redshift_spline.c"
 #include "../cosmolike_core/theory/halo.c"
 #include "../cosmolike_core/theory/cosmo2D_fourier.c"
@@ -263,6 +263,9 @@ int main(int argc, char** argv)
     //for diagnostics only: evaluate 3x2pt model data vector for covariance parameters
     sprintf(OUTFILE,"%s%s.3x2pt_model_vector",covparams.outdir,covparams.filename);
     print_modelvector(OUTFILE);
+    
+    sprintf(OUTFILE,"%s%s.parameter_check.txt",covparams.outdir,covparams.filename);
+    print_parameter_check(OUTFILE,inifile);
 
   }
 
