@@ -91,7 +91,7 @@ void print_parameter_check(char *outputfile, char *inifile){
   fprintf(F,"nuisance.oneplusz0_ia = %g\n",nuisance.oneplusz0_ia);
 
 
-  fprintf(F,"\ntomo.clustering_Nbin = %g\n",tomo.clustering_Nbin);
+  fprintf(F,"\ntomo.clustering_Nbin = %d\n",tomo.clustering_Nbin);
   fprintf(F,"redshift.clustering_REDSHIFT_FILE = %s\n",redshift.clustering_REDSHIFT_FILE);
   int i;
   for (i=0; i < tomo.clustering_Nbin; i++){
@@ -101,15 +101,12 @@ void print_parameter_check(char *outputfile, char *inifile){
     fprintf(F,"gbias.b_mag[%d] = %g\n",i,gbias.b_mag[i]);
   }
   for (i=0; i < tomo.clustering_Nbin; i++){
-    fprintf(F,"tomo.n_lens_ij[%d][%d] = %g\n",i,i,tomo.n_lens_ij[i]);
+    fprintf(F,"tomo.n_lens_ij[%d][%d] = %g\n",i,i,tomo.n_lens_ij[i][i]);
   }
 
 
-  fprintf(F,"\ntomo.shear_Nbin = %g\n",tomo.shear_Nbin);
+  fprintf(F,"\ntomo.shear_Nbin = %d\n",tomo.shear_Nbin);
   fprintf(F,"redshift.shear_REDSHIFT_FILE = %s\n",redshift.shear_REDSHIFT_FILE);
-  for (i=0; i < tomo.shear_Nbin; i++){
-    fprintf(F,"gbias.b_mag[%d] = %g\n",i,gbias.b_mag[i]);
-  }
   for (i=0; i < tomo.shear_Nbin; i++){
     fprintf(F,"tomo.n_source[%d] = %g\n",i,tomo.n_source[i]);
   }
@@ -123,8 +120,9 @@ void print_parameter_check(char *outputfile, char *inifile){
 
   fprintf(F,"\ncovparams.tmin = %g\n",covparams.tmin);
   fprintf(F,"covparams.tmax = %g\n",covparams.tmax);
-  fprintf(F,"covparams.ntheta = %g\n",covparams.ntheta);
-  fprintf(F,"covparams.C_FOOTPRINT_FILE = %g\n",covparams.C_FOOTPRINT_FILE);
+  fprintf(F,"covparams.ntheta = %d\n",covparams.ntheta);
+  fprintf(F,"like.Ntheta = %d\n",like.Ntheta);
+  fprintf(F,"covparams.C_FOOTPRINT_FILE = %s\n",covparams.C_FOOTPRINT_FILE);
   fprintf(F,"survey.area = %g\n",survey.area);
   fprintf(F,"survey.sigma_e = %g\n",survey.sigma_e);
 
