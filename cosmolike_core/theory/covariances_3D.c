@@ -453,6 +453,16 @@ double delPlin_SSC(double k, double a){
 }
 
 double w_mask(double theta_min){
+  //hack for Y6, hardcoded w_mask computed in configuration space
+  //this works for 20 angular bins, 2.5-250. arcmin and 26 bins, 2.5-995.267926 arcmin
+    double w_vec[26] = {0.89846548, 0.88957207, 0.88163682, 0.87430136, 0.86746831, 0.86189736, 0.85705032, 0.85179561, 0.84727459, 0.84319018, 0.83896965, 0.83470766, 0.82982945, 0.8241493 , 0.81752557, 0.80955155, 0.80041696, 0.78926181, 0.77566462, 0.75995136, 0.74200866, 0.721224  , 0.6962229 , 0.66551544, 0.62831134, 0.58588002};
+    int i = 0;
+    while(like.theta_min[i]< theta_min){
+      i ++;
+    }
+  return w_vec[i];
+}
+/*double w_mask(double theta_min){
   static int NTHETA = 0;
   static double *w_vec =0;
   int i,l;
@@ -534,4 +544,4 @@ double w_mask(double theta_min){
     i ++;
   }
   return w_vec[i];
-}
+}*/
